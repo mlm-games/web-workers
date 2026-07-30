@@ -176,7 +176,10 @@ jobs:
         driver:
           - { os: ubuntu-latest, name: Chrome, var: CHROMEDRIVER, value: chromedriver, flags: --cfg=unsupported_spawn_then_block }
           - { os: ubuntu-latest, name: Firefox, var: GECKODRIVER, value: geckodriver, flags: "--cfg=unsupported_service --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" }
-          - { os: macos-latest, name: Safari, var: SAFARIDRIVER, value: safaridriver, flags: "--cfg=unsupported_spawn_then_block --cfg=unsupported_shared_block" }
+          # Safari/macOS disabled because wasm-bindgen-test unconditionally depends on minicov,
+          # whose cc build script tries to cross-compile C for wasm32-unknown-unknown, which still fail.
+          # https://rustwasm.github.io/docs/wasm-bindgen/wasm-bindgen-test/coverage.html
+          # - { os: macos-latest, name: Safari, var: SAFARIDRIVER, value: safaridriver, flags: "--cfg=unsupported_spawn_then_block --cfg=unsupported_shared_block" }
         exclude:
           - rust: { toolchain: stable }
             features: { features: "", label: "" }

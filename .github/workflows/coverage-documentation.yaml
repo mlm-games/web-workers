@@ -138,6 +138,7 @@ jobs:
           if [[ ${#objects[@]} -eq 0 ]]; then
             echo "No .o files found, skipping report";
             mkdir -p coverage-output;
+            echo "<!DOCTYPE html><title>Coverage</title><body>No coverage data for this commit.</body>" > coverage-output/index.html
             exit 0;
           fi
           mkdir coverage-output

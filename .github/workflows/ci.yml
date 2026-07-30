@@ -217,6 +217,7 @@ jobs:
       - name: Documentation tests
         if: matrix.rust.toolchain == 'nightly'
         env:
+          RUSTFLAGS: --cfg=web_sys_unstable_apis ${{ matrix.rust.flags }} ${{ matrix.driver.flags }} ${{ matrix.coop.flags }}
           RUSTDOCFLAGS: --cfg=web_sys_unstable_apis ${{ matrix.rust.flags }} ${{ matrix.driver.flags }} ${{ matrix.coop.flags }}
         run: |
           cargo +nightly test --doc --no-fail-fast ${{ matrix.features.features }} --target wasm32-unknown-unknown -- --test-threads 1

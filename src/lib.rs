@@ -59,10 +59,6 @@
 	feature(stdarch_wasm_atomic_wait)
 )]
 #![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(
-	docsrs,
-	doc(cfg_hide(docsrs, target_family = "wasm", target_os = "unknown"))
-)]
 
 #[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;

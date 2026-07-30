@@ -250,6 +250,7 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 	"cfg(unsupported_spawn)",
 	"cfg(unsupported_spawn_then_block)",
 	"cfg(unsupported_wait_async)",
+	"cfg(Web)",
 	"cfg(wasm_bindgen_unstable_test_coverage)",
 	"cfg(web_sys_unstable_apis)",
 ] }

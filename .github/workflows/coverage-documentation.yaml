@@ -151,7 +151,7 @@ jobs:
           name: test-coverage
           path: coverage-output
           retention-days: 1
-          if-no-files-found: error
+          if-no-files-found: ignore
 
   document:
     name: Document

@@ -3,7 +3,6 @@ name: Coverage & Documentation
 on:
   push:
     branches: ["main"]
-  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -47,10 +46,11 @@ jobs:
           sudo add-apt-repository "deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main"
           sudo apt-get update
           sudo apt-get install clang-22
-      - name: Install Rust nightly
-        run: |
-          rustup toolchain install nightly --profile minimal --target wasm32-unknown-unknown ${{ matrix.mt.component }}
-          rustup default nightly
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          targets: wasm32-unknown-unknown
+          components: rust-src
       - name: Test
         env:
           CHROMEDRIVER: chromedriver
@@ -158,10 +158,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Install Rust nightly
-        run: |
-          rustup toolchain install nightly --profile minimal --target wasm32-unknown-unknown
-          rustup default nightly
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          targets: wasm32-unknown-unknown
+          components: rust-src
       - name: Run Rustdoc
         env:
           RUSTDOCFLAGS: --crate-version main --cfg=docsrs

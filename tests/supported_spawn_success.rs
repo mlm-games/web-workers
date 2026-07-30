@@ -1,9 +1,8 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 #[cfg(not(target_family = "wasm"))]
 use std::time;
 
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use time::{Duration, Instant};
 use web_workers::{Builder, Scope};
 #[cfg(target_family = "wasm")]

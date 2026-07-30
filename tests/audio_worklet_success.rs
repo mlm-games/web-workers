@@ -1,10 +1,9 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::cell::RefCell;
 use std::future::Future;
 
 use js_sys::{Array, Iterator, JsString, Object, Reflect};
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use wasm_bindgen_test::wasm_bindgen_test;

@@ -1,4 +1,28 @@
-# Test
+# Quick CI (via `just`)
+
+Install `just` (https://just.systems): `cargo binstall just`
+
+```sh
+just fmt          # auto-fix formatting
+just fmt-check    # check formatting
+just clippy       # lint all targets
+just build        # build all targets
+just docs         # build docs
+just test-native  # native unit + doc tests
+just audit        # cargo-deny
+just ci           # fmt-check + clippy + build + docs + test-native + audit
+```
+
+Browser tests (requires chromedriver/geckodriver/safaridriver installed):
+```sh
+just test-wasm-chrome
+just test-wasm-firefox
+just test-wasm-atomics-chrome
+```
+
+---
+
+# Test Reference
 
 ## Native
 

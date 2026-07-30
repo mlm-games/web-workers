@@ -1,8 +1,7 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::pin::pin;
 
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web;
 

@@ -1,11 +1,10 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::marker::PhantomPinned;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 #[cfg(target_family = "wasm")]
 use wasm_bindgen_test::wasm_bindgen_test;

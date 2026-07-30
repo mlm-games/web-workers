@@ -1,10 +1,9 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::hint;
 
 use futures_util::future;
 use futures_util::future::Either;
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use web_workers::Builder;
 
 use crate::util;

@@ -1,6 +1,5 @@
 #[cfg(target_family = "wasm")]
 use minicov as _;
-
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web::{BuilderExt, ScopeExt};
 use web_workers::{Builder, web};

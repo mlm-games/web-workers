@@ -1,9 +1,8 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::sync::mpsc;
 
 use futures_util::future::{self, Either};
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web::{JoinHandleExt, ScopedJoinHandleExt};
 use web_workers::{JoinHandle, web};

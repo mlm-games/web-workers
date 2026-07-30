@@ -1,3 +1,4 @@
+#![cfg(target_family = "wasm")]
 #![expect(
 	clippy::missing_panics_doc,
 	missing_copy_implementations,
@@ -6,13 +7,11 @@
 	reason = "test support module"
 )]
 
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::cell::{OnceCell, RefCell};
 use std::marker::PhantomData;
 
 use js_sys::{Array, Iterator, Object};
+use minicov as _;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{AudioWorkletNodeOptions, AudioWorkletProcessor};

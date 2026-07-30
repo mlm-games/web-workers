@@ -1,0 +1,371 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+permissions:
+  contents: read
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          components: rustfmt
+          cache: false
+      - run: cargo fmt --all -- --check
+
+  rustdoc:
+    name: Docs (${{ matrix.target }}${{ matrix.description }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            toolchain: stable
+            description: native
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            extra: --cfg=web_sys_unstable_apis
+            description: wasm
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            extra: --cfg=web_sys_unstable_apis
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            description: wasm+atomics
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          targets: ${{ matrix.target }}
+          components: rust-src
+      - name: Run rustdoc
+        env:
+          RUSTDOCFLAGS: -D warnings ${{ matrix.extra }} ${{ matrix.flags }}
+          RUSTFLAGS: ${{ matrix.extra }} ${{ matrix.flags }}
+        run: |
+          cargo doc --no-deps --document-private-items --lib --examples --all-features --target ${{ matrix.target }} ${{ matrix.args }}
+
+  rustdoc-docsrs:
+    name: Docs (docsrs) (${{ matrix.target }}${{ matrix.description }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            toolchain: nightly
+            description: native
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            extra: --cfg=web_sys_unstable_apis
+            description: wasm
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            extra: --cfg=web_sys_unstable_apis
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            description: wasm+atomics
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          targets: ${{ matrix.target }}
+          components: rust-src
+      - name: Run rustdoc
+        env:
+          RUSTDOCFLAGS: -D warnings --cfg=docsrs ${{ matrix.extra }} ${{ matrix.flags }}
+          RUSTFLAGS: ${{ matrix.extra }} ${{ matrix.flags }}
+        run: |
+          cargo doc --no-deps --document-private-items --lib --examples --all-features --target ${{ matrix.target }} ${{ matrix.args }}
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src/thread/atomics/script
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup NPM
+        run: npm install
+      - name: Run ESLint
+        run: npx eslint
+
+  build:
+    name: Build (${{ matrix.target }}${{ matrix.description }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            toolchain: stable
+            features: ""
+            description: native
+          - target: x86_64-unknown-linux-gnu
+            toolchain: stable
+            features: --all-features
+            description: native
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            features: ""
+            description: wasm
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            features: --all-features
+            description: wasm
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            features: --all-features
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            description: wasm+atomics
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          targets: ${{ matrix.target }}
+          components: rust-src
+      - name: Build
+        env:
+          RUSTFLAGS: ${{ matrix.flags }}
+        run: cargo build ${{ matrix.features }} --target ${{ matrix.target }} ${{ matrix.args }}
+      - name: Documentation
+        env:
+          RUSTDOCFLAGS: ${{ matrix.flags }}
+          RUSTFLAGS: ${{ matrix.flags }}
+        run: cargo doc --no-deps ${{ matrix.features }} --target ${{ matrix.target }} ${{ matrix.args }}
+
+  test-native:
+    name: Test Native
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo test --all-targets --no-fail-fast
+      - run: cargo test --doc --no-fail-fast
+
+  test-wasm:
+    name: ${{ matrix.rust.label }} ${{ matrix.driver.description }}${{ matrix.coop.label }}${{ matrix.features.label }}
+    runs-on: ${{ matrix.driver.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - { toolchain: stable, label: Test }
+          - { toolchain: nightly, label: Doctest, doctest: true }
+          - { toolchain: nightly, label: Test+Doctest, atomics: true, component: rust-src, flags: -Ctarget-feature=+atomics, args: -Zbuild-std=panic_abort,std }
+        features:
+          - { features: "", label: "" }
+          - { features: --features audio-worklet, label: " (audio-worklet)" }
+          - { features: --features message, label: " (message)" }
+          - { features: --all-features, label: " (all)" }
+        coop:
+          - { state: true, label: "" }
+          - { state: false, label: " (no COOP)", flags: --cfg=unsupported_spawn }
+        driver:
+          - { os: ubuntu-latest, name: Chrome, var: CHROMEDRIVER, value: chromedriver, flags: --cfg=unsupported_spawn_then_block }
+          - { os: ubuntu-latest, name: Firefox, var: GECKODRIVER, value: geckodriver, flags: "--cfg=unsupported_service --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" }
+          - { os: macos-latest, name: Safari, var: SAFARIDRIVER, value: safaridriver, flags: "--cfg=unsupported_spawn_then_block --cfg=unsupported_shared_block" }
+        exclude:
+          - rust: { toolchain: stable }
+            features: { features: "", label: "" }
+          - rust: { toolchain: stable }
+            features: { features: --features audio-worklet, label: " (audio-worklet)" }
+          - rust: { toolchain: stable }
+            features: { features: --features message, label: " (message)" }
+          - rust: { toolchain: nightly, doctest: true }
+            features: { features: "", label: "" }
+          - rust: { toolchain: nightly, doctest: true }
+            features: { features: --features audio-worklet, label: " (audio-worklet)" }
+          - rust: { toolchain: nightly, doctest: true }
+            features: { features: --features message, label: " (message)" }
+          - rust: { toolchain: nightly, atomics: true, component: rust-src, flags: -Ctarget-feature=+atomics, args: -Zbuild-std=panic_abort,std }
+            features: { features: "", label: "" }
+            coop: { state: false, label: " (no COOP)", flags: --cfg=unsupported_spawn }
+          - rust: { toolchain: nightly, atomics: true, component: rust-src, flags: -Ctarget-feature=+atomics, args: -Zbuild-std=panic_abort,std }
+            features: { features: --features audio-worklet, label: " (audio-worklet)" }
+            coop: { state: false, label: " (no COOP)", flags: --cfg=unsupported_spawn }
+          - rust: { toolchain: nightly, atomics: true, component: rust-src, flags: -Ctarget-feature=+atomics, args: -Zbuild-std=panic_abort,std }
+            features: { features: --features message, label: " (message)" }
+            coop: { state: false, label: " (no COOP)", flags: --cfg=unsupported_spawn }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust.toolchain }}
+          targets: wasm32-unknown-unknown
+          components: ${{ matrix.rust.component || '' }}
+      - name: Set Driver
+        run: echo "${{ matrix.driver.var }}=${{ matrix.driver.value }}" >> $GITHUB_ENV
+      - name: Disable Cross-Origin-Isolation
+        if: matrix.coop.state == false
+        run: echo "WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1" >> $GITHUB_ENV
+      - name: Test
+        if: matrix.rust.toolchain != 'nightly' || matrix.rust.atomics
+        env:
+          RUSTFLAGS: --cfg=web_sys_unstable_apis ${{ matrix.rust.flags }} ${{ matrix.driver.flags }} ${{ matrix.coop.flags }}
+        run: |
+          cargo test --all-targets --no-fail-fast ${{ matrix.features.features }} --target wasm32-unknown-unknown ${{ matrix.rust.args }}
+      - name: Documentation tests
+        if: matrix.rust.toolchain == 'nightly'
+        env:
+          RUSTFLAGS: --cfg=web_sys_unstable_apis ${{ matrix.rust.flags }} ${{ matrix.driver.flags }} ${{ matrix.coop.flags }}
+          RUSTDOCFLAGS: --cfg=web_sys_unstable_apis ${{ matrix.rust.flags }} ${{ matrix.driver.flags }} ${{ matrix.coop.flags }}
+        run: |
+          cargo +nightly test --doc --no-fail-fast ${{ matrix.features.features }} --target wasm32-unknown-unknown ${{ matrix.rust.args }} -Zdoctest-xcompile -- --test-threads 1
+
+  compile-test-wasm:
+    name: Compile Tests on Web${{ matrix.description }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - toolchain: stable
+            build_std: 0
+            description: ""
+          - toolchain: nightly
+            component: rust-src
+            flags: -Ctarget-feature=+atomics
+            args: --features message
+            build_std: 1
+            description: " (atomics)"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          targets: wasm32-unknown-unknown
+          components: ${{ matrix.component || '' }}
+      - name: Test
+        env:
+          UI_TEST_TARGET: wasm32-unknown-unknown
+          UI_TEST_RUSTFLAGS: ${{ matrix.flags }}
+          UI_TEST_ARGS: ${{ matrix.args }}
+          UI_TEST_BUILD_STD: ${{ matrix.build_std }}
+        run: cargo test --test compile_test
+
+  minimal-versions:
+    name: Minimal Versions (${{ matrix.target }}${{ matrix.description }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: minimal-versions
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: wasm32-unknown-unknown
+            toolchain: "1.85"
+            description: MSRV
+            features: ""
+          - target: wasm32-unknown-unknown
+            toolchain: "1.85"
+            description: MSRV
+            features: --features audio-worklet
+          - target: wasm32-unknown-unknown
+            toolchain: "1.85"
+            description: MSRV
+            features: --features message
+          - target: wasm32-unknown-unknown
+            toolchain: "1.85"
+            description: MSRV
+            features: --all-features
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            description: Stable
+            features: ""
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            description: Stable
+            features: --features audio-worklet
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            description: Stable
+            features: --features message
+          - target: wasm32-unknown-unknown
+            toolchain: stable
+            description: Stable
+            features: --all-features
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            description: Nightly+atomics
+            component: "--component rust-src"
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            features: ""
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            description: Nightly+atomics
+            component: "--component rust-src"
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            features: --features audio-worklet
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            description: Nightly+atomics
+            component: "--component rust-src"
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            features: --features message
+          - target: wasm32-unknown-unknown
+            toolchain: nightly
+            description: Nightly+atomics
+            component: "--component rust-src"
+            flags: -Ctarget-feature=+atomics
+            args: -Zbuild-std=panic_abort,std
+            features: --all-features
+          - target: x86_64-unknown-linux-gnu
+            toolchain: "1.85"
+            description: MSRV
+            features: --all-features
+          - target: x86_64-unknown-linux-gnu
+            toolchain: stable
+            description: Stable
+            features: --all-features
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Rust ${{ matrix.toolchain }}
+        run: |
+          rustup toolchain install ${{ matrix.toolchain }} --profile minimal ${{ matrix.component }} --target ${{ matrix.target }}
+          rustup default ${{ matrix.toolchain }}
+      - name: Install Rust nightly (for minimal-versions)
+        run: rustup toolchain install nightly --profile minimal
+      - name: Update to minimal versions
+        run: cargo +nightly update -Zminimal-versions
+      - name: Fix nightly proc-macro2
+        if: matrix.toolchain == 'nightly'
+        run: cargo update -p proc-macro2 --precise 1.0.60
+      - name: Build
+        env:
+          RUSTFLAGS: ${{ matrix.flags }}
+        run: cargo build ${{ matrix.features }} --target ${{ matrix.target }} ${{ matrix.args }}
+

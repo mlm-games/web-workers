@@ -1,4 +1,5 @@
-#[cfg(target_family = "wasm")]
+#![cfg(target_family = "wasm")]
+
 use minicov as _;
 
 #[cfg(target_family = "wasm")]

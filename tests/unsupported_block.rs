@@ -1,8 +1,7 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use js_sys::WebAssembly::Memory;
 use js_sys::{Atomics, Int32Array, Object, Reflect, SharedArrayBuffer};
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_test::wasm_bindgen_test;

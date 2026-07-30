@@ -1,6 +1,5 @@
 #[cfg(target_family = "wasm")]
 use minicov as _;
-
 use web_workers::web;
 
 #[wasm_bindgen_test::wasm_bindgen_test]

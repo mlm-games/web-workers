@@ -2,9 +2,6 @@
 #![cfg(all(target_family = "wasm", target_feature = "atomics"))]
 #![allow(dead_code, unreachable_pub)]
 
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -13,6 +10,8 @@ use std::task::{Context, Poll, ready};
 
 use atomic_waker::AtomicWaker;
 use js_sys::Promise;
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;

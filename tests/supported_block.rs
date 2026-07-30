@@ -1,9 +1,8 @@
-#[cfg(target_family = "wasm")]
-use minicov as _;
-
 #[cfg(not(target_family = "wasm"))]
 use std::time;
 
+#[cfg(target_family = "wasm")]
+use minicov as _;
 use time::{Duration, Instant};
 #[cfg(target_family = "wasm")]
 use {wasm_bindgen_test::wasm_bindgen_test, web_time as time, web_workers::web};

@@ -297,24 +297,19 @@ mod web {
 						drop(Rc::into_inner(volumes).unwrap());
 
 						// Setup restart button.
-						start_stop_button.set_onclick({
-							let start_stop_button = start_stop_button.clone();
-							Some(
-								Closure::once_into_js(move || {
-									// Disable button during restarting.
-									start_stop_button.set_disabled(true);
-									start_stop_button.set_inner_text("Starting ...");
-									start_stop_button.set_onclick(None);
+						let onclick_btn = start_stop_button.clone();
+						let onclick = Closure::once_into_js(move || {
+							// Disable button during restarting.
+							onclick_btn.set_disabled(true);
+							onclick_btn.set_inner_text("Starting ...");
+							onclick_btn.set_onclick(None);
 
-									wasm_bindgen_futures::future_to_promise(async {
-										start(document, container, start_stop_button).await;
-										Ok(JsValue::UNDEFINED)
-									})
-								})
-								.as_ref()
-								.unchecked_ref(),
-							)
+							wasm_bindgen_futures::future_to_promise(async {
+								start(document, container, onclick_btn).await;
+								Ok(JsValue::UNDEFINED)
+							})
 						});
+						start_stop_button.set_onclick(Some(onclick.as_ref().unchecked_ref()));
 						// Re-enable button after restarting.
 						start_stop_button.set_disabled(false);
 						start_stop_button.set_inner_text("Start");

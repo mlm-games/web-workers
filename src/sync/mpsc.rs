@@ -1,11 +1,12 @@
-use crate::sync::Mutex;
-use crate::sync::condvar::Condvar;
 use std::cell::Cell;
 use std::collections::VecDeque;
 use std::fmt;
 use std::marker::PhantomData;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+
+use crate::sync::Mutex;
+use crate::sync::condvar::Condvar;
 
 struct Shared<T> {
 	queue: Mutex<VecDeque<T>>,

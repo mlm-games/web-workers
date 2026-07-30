@@ -4,12 +4,11 @@
 pub(super) mod message;
 
 use std::future::Future;
-use std::io;
-use std::mem;
 use std::pin::Pin;
 use std::ptr::NonNull;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicI32, Ordering};
+use std::{io, mem};
 
 use js_sys::Array;
 use js_sys::WebAssembly::{Memory, Module};

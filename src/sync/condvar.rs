@@ -1,14 +1,15 @@
-use crate::sync::guard::Guard;
-use crate::sync::spinlock::Spinlock;
 use std::future::Future;
 use std::marker::Unpin;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
-
 #[cfg(not(target_arch = "wasm32"))]
 use std::time::Instant;
+
 #[cfg(target_arch = "wasm32")]
 use web_time::Instant;
+
+use crate::sync::guard::Guard;
+use crate::sync::spinlock::Spinlock;
 
 struct AsyncWaiter {
 	id: u64,
@@ -95,7 +96,8 @@ impl Condvar {
 		}
 	}
 
-	/// Waits while the predicate returns `true`, using the best platform strategy.
+	/// Waits while the predicate returns `true`, using the best platform
+	/// strategy.
 	pub fn wait_sync_while<'a, T, F>(
 		&self,
 		mut guard: Guard<'a, T>,

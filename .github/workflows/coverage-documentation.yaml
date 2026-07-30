@@ -92,6 +92,10 @@ jobs:
             while (( counter != 0 )); do
                 counter=$(perl -i -p0e '$c+= s/(^(define|declare)(,? [^\n ]+)*),? range\(.*?\)/$1/gm; END{print "$c"}' $input)
             done
+            counter=1
+            while (( counter != 0 )); do
+                counter=$(perl -i -p0e '$c+= s/(^(define|declare)(,? [^\n ]+)*),? captures\(.*?\)/$1/gm; END{print "$c"}' $input)
+            done
 
             clang-18 $input -Wno-override-module -c -o coverage-output/$(basename $input .ll).o
           done

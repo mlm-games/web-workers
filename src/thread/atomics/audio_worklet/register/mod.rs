@@ -179,7 +179,8 @@ enum State {
 		/// Message to be sent.
 		#[cfg(feature = "message")]
 		message: Option<MessageState>,
-		/// Object URL to the worklet script — created here and moved into Module.
+		/// Object URL to the worklet script — created here and moved into
+		/// Module.
 		worklet_url: String,
 	},
 	/// Waiting for `Worklet.addModule()`.

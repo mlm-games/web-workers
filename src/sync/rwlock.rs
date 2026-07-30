@@ -1,7 +1,8 @@
-use crate::sync::guard::{ReadGuard, WriteGuard};
-use crate::sync::spinlock::Spinlock;
 use std::cell::UnsafeCell;
 use std::sync::atomic::AtomicU8;
+
+use crate::sync::guard::{ReadGuard, WriteGuard};
+use crate::sync::spinlock::Spinlock;
 
 pub(crate) const UNLOCKED: u8 = 0;
 pub(crate) const LOCKED_WRITE: u8 = 0b10000000;

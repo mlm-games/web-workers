@@ -98,8 +98,8 @@ pub(super) struct Data {
 #[allow(private_interfaces, unreachable_pub)]
 pub unsafe fn __web_workers_worklet_register(data: NonNull<Data>) {
 	// SAFETY: Has to be a valid pointer to a `Data`. We only call
-	// `__web_workers_worklet_register` from `worklet_with_message.js`. The data sent
-	// to it comes only from `RegisterThreadFuture::poll()`.
+	// `__web_workers_worklet_register` from `worklet_with_message.js`. The data
+	// sent to it comes only from `RegisterThreadFuture::poll()`.
 	let data: Data = *unsafe { Box::from_raw(data.as_ptr()) };
 
 	Thread::register(data.thread);

@@ -11,17 +11,16 @@ pub mod rwlock;
 /// Spinlock for short-lived critical sections.
 pub mod spinlock;
 
+#[cfg(not(target_arch = "wasm32"))]
+pub use std::time::Instant;
+
 pub use guard::Guard;
 pub use mutex::{Mutex, NotAvailable};
 pub use spinlock::Spinlock;
-
-#[cfg(not(target_arch = "wasm32"))]
-pub use std::time::Instant;
-#[cfg(target_arch = "wasm32")]
-pub use web_time::Instant;
-
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
+#[cfg(target_arch = "wasm32")]
+pub use web_time::Instant;
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen(inline_js = "

@@ -1,14 +1,15 @@
-use crate::sync::guard::Guard;
-use crate::sync::spinlock::Spinlock;
 use std::cell::UnsafeCell;
 use std::future::Future;
 use std::marker::Unpin;
 use std::sync::atomic::AtomicBool;
-
 #[cfg(not(target_arch = "wasm32"))]
 use std::time::Instant;
+
 #[cfg(target_arch = "wasm32")]
 use web_time::Instant;
+
+use crate::sync::guard::Guard;
+use crate::sync::spinlock::Spinlock;
 
 /// Error indicating the lock could not be acquired immediately.
 #[derive(Debug, Copy, Clone)]

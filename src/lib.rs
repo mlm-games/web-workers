@@ -13,12 +13,12 @@
 //! - Audio worklets are very limited, e.g. should not do any allocation.
 //! - Spawning happens on the "main" thread, e.g. if blocked nothing will spawn
 //!   (affects some browsers only).
-//! - Calling any functions from a thread not spawned by `web-workers` will cause
-//!   issues.
+//! - Calling any functions from a thread not spawned by `web-workers` will
+//!   cause issues.
 //! - Wasm threads/atomics are now broadly supported (Baseline 2025+), but still
 //!   require cross-origin isolation for `SharedArrayBuffer`.
-//! - `Atomics.waitAsync()` is broadly available (Baseline 2025) and works on the
-//!   main thread for non-blocking waits.
+//! - `Atomics.waitAsync()` is broadly available (Baseline 2025) and works on
+//!   the main thread for non-blocking waits.
 //! - Deploying cross-origin isolation can use COOP+COEP headers, or
 //!   `Document-Isolation-Policy` in Chromium 137+.
 //!

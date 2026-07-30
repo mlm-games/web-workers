@@ -53,6 +53,7 @@ continue = "0.1.1"
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
 js-sys = "0.3.103"
+minicov = "0.3"
 pin-project = "1.1.13"
 wasm-bindgen = { version = "0.2.126", default-features = false }
 wasm-bindgen-futures = "0.4.76"
@@ -249,6 +250,7 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 	"cfg(unsupported_spawn)",
 	"cfg(unsupported_spawn_then_block)",
 	"cfg(unsupported_wait_async)",
+	"cfg(wasm_bindgen_unstable_test_coverage)",
 	"cfg(web_sys_unstable_apis)",
 ] }
 

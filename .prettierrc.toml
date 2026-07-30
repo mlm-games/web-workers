@@ -15,3 +15,5 @@ options = { singleQuote = false, tabWidth = 2 }
 [[overrides]]
 files = ["notes.md"]
 options = { proseWrap = "preserve" }
+
+# maybe is useful as a ref.

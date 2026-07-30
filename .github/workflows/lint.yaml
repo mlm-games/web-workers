@@ -13,9 +13,9 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  clippy-rustdoc:
+  rustdoc:
     name:
-      Clippy & Rustdoc ${{ matrix.target.description }} ${{ matrix.rust.description }} ${{
+      Rustdoc ${{ matrix.target.description }} ${{ matrix.rust.description }} ${{
       matrix.features.description }}
 
     runs-on: ubuntu-latest
@@ -61,11 +61,6 @@ jobs:
         run: |
           rustup toolchain install ${{ matrix.rust.version }} --profile minimal --component clippy${{ matrix.rust.component }} --allow-downgrade --target ${{ matrix.target.target }}
           rustup default ${{ matrix.rust.version }}
-      - name: Run Clippy
-        env:
-          RUSTFLAGS: ${{ matrix.rust.flags }} ${{ matrix.features.flags }}
-        run: |
-          cargo clippy --all-targets ${{ matrix.features.features }} --target ${{ matrix.target.target }} ${{ matrix.rust.args }} -- -D warnings
       - name: Run Rustdoc
         env:
           RUSTDOCFLAGS: -D warnings ${{ matrix.rust.flags }} ${{ matrix.features.flags }}

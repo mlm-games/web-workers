@@ -46,11 +46,8 @@ jobs:
           sudo add-apt-repository "deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main"
           sudo apt-get update
           sudo apt-get install clang-22
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: nightly
-          targets: wasm32-unknown-unknown
-          components: rust-src
+      - run: rustup target add wasm32-unknown-unknown --toolchain nightly
+      - run: rustup component add rust-src --toolchain nightly
       - name: Test
         env:
           CHROMEDRIVER: chromedriver
@@ -63,7 +60,7 @@ jobs:
           WASM_BINDGEN_UNSTABLE_TEST_PROFRAW_OUT: coverage-output
         run: |
           mkdir coverage-output
-          cargo test --all-features --target wasm32-unknown-unknown -Ztarget-applies-to-host -Zhost-config ${{ matrix.mt.args }} --tests -- --skip corrupt
+          cargo +nightly test --all-features --target wasm32-unknown-unknown -Ztarget-applies-to-host -Zhost-config ${{ matrix.mt.args }} --tests -- --skip corrupt
       - name: Prepare Object Files
         env:
           CFLAGS_wasm32_unknown_unknown: ${{ matrix.mt.cflags }}
@@ -77,7 +74,7 @@ jobs:
           crate_name=web_workers
           IFS=$'\n'
           for file in $(
-            cargo test --all-features --target wasm32-unknown-unknown -Ztarget-applies-to-host -Zhost-config ${{ matrix.mt.args }} --tests --no-run --message-format=json | \
+            cargo +nightly test --all-features --target wasm32-unknown-unknown -Ztarget-applies-to-host -Zhost-config ${{ matrix.mt.args }} --tests --no-run --message-format=json | \
             jq -r "select(.reason == \"compiler-artifact\") | (select(.target.kind == [\"test\"]) // select(.target.name == \"$crate_name\")) | .filenames[0]"
           )
           do
@@ -158,16 +155,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: nightly
-          targets: wasm32-unknown-unknown
-          components: rust-src
+      - run: rustup target add wasm32-unknown-unknown --toolchain nightly
+      - run: rustup component add rust-src --toolchain nightly
       - name: Run Rustdoc
         env:
           RUSTDOCFLAGS: --crate-version main --cfg=docsrs
         run:
-          cargo doc --all-features --target wasm32-unknown-unknown --no-deps -Zrustdoc-map
+          cargo +nightly doc --all-features --target wasm32-unknown-unknown --no-deps -Zrustdoc-map
           -Zrustdoc-scrape-examples
       - name: Setup Pages
         uses: actions/configure-pages@v6

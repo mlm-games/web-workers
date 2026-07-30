@@ -5,7 +5,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::{fmt, thread};
 
-use super::{r#impl, Builder, Thread};
+use super::{Builder, Thread, r#impl};
 
 /// See [`std::thread::spawn()`].
 ///

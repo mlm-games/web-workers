@@ -4,28 +4,28 @@
 pub(super) mod message;
 
 use std::future::Future;
+use std::io;
 use std::mem;
 use std::pin::Pin;
 use std::ptr::NonNull;
-use std::sync::atomic::{AtomicI32, Ordering};
 use std::sync::Arc;
-use std::io;
+use std::sync::atomic::{AtomicI32, Ordering};
 
 use js_sys::Array;
 use js_sys::WebAssembly::{Memory, Module};
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{Worker, WorkerOptions, WorkerType};
 #[cfg(feature = "message")]
 use {self::message::SPAWN_SENDER, super::channel};
 
 #[cfg(feature = "audio-worklet")]
 use super::audio_worklet::register::THREAD_LOCK_INDEXES;
-use super::js::{Meta, META};
+use super::js::{META, Meta};
 use super::main::{self, Command};
 use super::memory::ThreadMemory;
 use super::url::ScriptUrl;
-use super::{oneshot, JoinHandle, ScopeData, Thread, ThreadId, MEMORY, MODULE};
+use super::{JoinHandle, MEMORY, MODULE, ScopeData, Thread, ThreadId, oneshot};
 use crate::thread::atomics::main::{State, WORKERS};
 
 /// Type of the task being sent to the worker.

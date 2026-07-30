@@ -35,7 +35,7 @@ use {std::io::Error, wasm_bindgen::JsValue, web_sys::DomException};
 use self::oneshot::Receiver;
 pub(super) use self::parker::Parker;
 use super::js::GlobalExt;
-use super::{ScopedJoinHandle, Thread, ThreadId, THREAD};
+use super::{ScopedJoinHandle, THREAD, Thread, ThreadId};
 #[cfg(feature = "message")]
 use crate::web::message::MessageSend;
 

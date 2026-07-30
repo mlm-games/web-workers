@@ -21,21 +21,21 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 
-use js::{GlobalExt, CROSS_ORIGIN_ISOLATED};
 use r#impl::Parker;
+use js::{CROSS_ORIGIN_ISOLATED, GlobalExt};
 use wasm_bindgen::JsCast;
 
 #[cfg(target_feature = "atomics")]
 use self::atomics as r#impl;
 pub use self::builder::Builder;
 use self::global::Global;
-pub use self::scope::{scope, Scope, ScopedJoinHandle};
-pub(crate) use self::scope::{scope_async, ScopeFuture};
-pub use self::spawn::{spawn, JoinHandle};
+pub use self::scope::{Scope, ScopedJoinHandle, scope};
+pub(crate) use self::scope::{ScopeFuture, scope_async};
+pub use self::spawn::{JoinHandle, spawn};
 #[cfg(not(target_feature = "atomics"))]
 use self::unsupported as r#impl;
-pub use self::yield_now::yield_now;
 pub(crate) use self::yield_now::YieldNowFuture;
+pub use self::yield_now::yield_now;
 
 /// See [`std::thread::Thread`].
 #[derive(Clone, Debug)]

@@ -79,8 +79,8 @@ pub use std::thread::*;
 #[cfg(all(target_family = "wasm", target_os = "unknown"))]
 #[allow(deprecated)]
 pub use self::thread::{
-	available_parallelism, current, park, park_timeout, park_timeout_ms, scope, sleep, sleep_ms,
-	spawn, yield_now, Builder, JoinHandle, Scope, ScopedJoinHandle, Thread, ThreadId,
+	Builder, JoinHandle, Scope, ScopedJoinHandle, Thread, ThreadId, available_parallelism, current,
+	park, park_timeout, park_timeout_ms, scope, sleep, sleep_ms, spawn, yield_now,
 };
 
 #[cfg(all(

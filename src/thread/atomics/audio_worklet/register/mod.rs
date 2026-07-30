@@ -24,17 +24,17 @@ use web_sys::{
 use {
 	self::message::{Data, MessageState},
 	super::super::channel,
-	super::super::spawn::message::SPAWN_SENDER,
 	super::super::spawn::SpawnData,
+	super::super::spawn::message::SPAWN_SENDER,
 	super::main::WORKLETS,
 	web_sys::MessageChannel,
 };
 
-use super::super::js::{Meta, META};
+use super::super::js::{META, Meta};
 use super::super::memory::ThreadMemory;
 use super::super::url::ScriptUrl;
 use super::super::wait_async::WaitAsync;
-use super::super::{main, oneshot, Thread, MEMORY, MODULE};
+use super::super::{MEMORY, MODULE, Thread, main, oneshot};
 use super::js::BaseAudioContextExt;
 use crate::thread::atomics::is_main_thread;
 
@@ -471,8 +471,7 @@ impl Future for RegisterThreadFuture {
 										#[cfg(not(feature = "message"))]
 										{
 											Thread::register(thread);
-											memory_sender
-												.send(ThreadMemory::new(stack_size));
+											memory_sender.send(ThreadMemory::new(stack_size));
 										}
 										#[cfg(feature = "message")]
 										{
@@ -504,16 +503,12 @@ impl Future for RegisterThreadFuture {
 								});
 							}
 							Err(error) => {
-								return Poll::Ready(Err(
-									super::super::error_from_exception(error),
-								));
+								return Poll::Ready(Err(super::super::error_from_exception(error)));
 							}
 						}
 					}
 					Poll::Ready(Err(error)) => {
-						return Poll::Ready(Err(
-							super::super::error_from_exception(error),
-						))
+						return Poll::Ready(Err(super::super::error_from_exception(error)));
 					}
 					Poll::Pending => {
 						self.0 = Some(state);
@@ -563,7 +558,7 @@ impl Future for RegisterThreadFuture {
 						});
 					}
 					Poll::Ready(Err(error)) => {
-						return Poll::Ready(Err(super::super::error_from_exception(error)))
+						return Poll::Ready(Err(super::super::error_from_exception(error)));
 					}
 					Poll::Pending => {
 						self.0 = Some(state);

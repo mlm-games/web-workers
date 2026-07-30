@@ -181,7 +181,7 @@ impl<T> Receiver<T> {
 			match state.value.try_lock().as_deref() {
 				Ok(State::Result(_) | State::Dropped | State::Taken) => return true,
 				Err(TryLockError::Poisoned(error)) => {
-					return !matches!(error.get_ref().deref(), State::Waiting)
+					return !matches!(error.get_ref().deref(), State::Waiting);
 				}
 				Ok(State::Waiting) => return false,
 				Err(TryLockError::WouldBlock) => (),

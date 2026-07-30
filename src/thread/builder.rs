@@ -3,7 +3,7 @@
 use std::future::Future;
 use std::io::{self, Error, ErrorKind};
 
-use super::{r#impl, JoinHandle, Scope, ScopedJoinHandle};
+use super::{JoinHandle, Scope, ScopedJoinHandle, r#impl};
 #[cfg(feature = "message")]
 use crate::web::message::MessageSend;
 

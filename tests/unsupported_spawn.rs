@@ -3,7 +3,7 @@
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web::{BuilderExt, ScopeExt};
-use web_workers::{web, Builder};
+use web_workers::{Builder, web};
 
 #[wasm_bindgen_test]
 #[should_panic = "operation not supported on this platform without the atomics target feature and \

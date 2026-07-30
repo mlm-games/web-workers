@@ -4,8 +4,8 @@
 use js_sys::Array;
 use js_sys::WebAssembly::Global;
 use js_sys::{Object, Promise};
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 use super::super::js::GlobalExt;
 

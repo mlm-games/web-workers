@@ -27,7 +27,11 @@ async fn test_stack_size(context: BaseAudioContext) {
 	use self::util::{Flag, SIGNAL_DURATION};
 
 	#[inline(never)]
-	#[expect(clippy::large_stack_frames, clippy::missing_const_for_fn, reason = "intentional large stack allocation")]
+	#[expect(
+		clippy::large_stack_frames,
+		clippy::missing_const_for_fn,
+		reason = "intentional large stack allocation"
+	)]
 	fn allocate_on_stack() {
 		#[expect(clippy::large_stack_arrays, reason = "intentional large stack array")]
 		hint::black_box([0_u8; 1024 * 1024 * 2]);

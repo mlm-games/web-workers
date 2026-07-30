@@ -18,8 +18,8 @@ mod web {
 	use std::cell::Cell;
 	use std::iter;
 	use std::rc::Rc;
-	use std::sync::atomic::{AtomicBool, AtomicI8, AtomicU8, Ordering};
 	use std::sync::Arc;
+	use std::sync::atomic::{AtomicBool, AtomicI8, AtomicU8, Ordering};
 
 	use itertools::Itertools;
 	use js_sys::{Array, Float32Array, Object, Promise, Reflect};
@@ -27,9 +27,9 @@ mod web {
 	use wasm_bindgen::{JsCast, JsValue};
 	use wasm_bindgen_futures::JsFuture;
 	use web_sys::{
-		console, AudioContext, AudioWorkletGlobalScope, AudioWorkletNodeOptions,
-		AudioWorkletProcessor, Blob, BlobPropertyBag, Document, HtmlButtonElement, HtmlElement,
-		HtmlInputElement, HtmlTableElement, HtmlTableRowElement, Url,
+		AudioContext, AudioWorkletGlobalScope, AudioWorkletNodeOptions, AudioWorkletProcessor,
+		Blob, BlobPropertyBag, Document, HtmlButtonElement, HtmlElement, HtmlInputElement,
+		HtmlTableElement, HtmlTableRowElement, Url, console,
 	};
 	use web_workers::web::audio_worklet::{
 		AudioWorkletGlobalScopeExt, BaseAudioContextExt, ExtendAudioWorkletProcessor,

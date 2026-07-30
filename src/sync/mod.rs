@@ -39,10 +39,10 @@ export function _web_workers_supportsAtomicsWait() {
 }
 ")]
 extern "C" {
-    fn _web_workers_supportsAtomicsWait() -> bool;
+	fn _web_workers_supportsAtomicsWait() -> bool;
 }
 
 #[cfg(target_arch = "wasm32")]
 pub(crate) fn atomics_wait_supported() -> bool {
-    _web_workers_supportsAtomicsWait()
+	_web_workers_supportsAtomicsWait()
 }

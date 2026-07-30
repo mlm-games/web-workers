@@ -1,7 +1,7 @@
 //! Bindings to the JS API.
 
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::Window;
 #[cfg(web_sys_unstable_apis)]
 pub(super) use web_sys::{Scheduler, SchedulerPostTaskOptions, TaskPriority};

@@ -433,7 +433,7 @@ impl<T> ScopeJoinFuture<'_, '_, T> {
 	/// not to block.
 	#[must_use]
 	pub fn is_finished(&self) -> bool {
-		self.0 .0.is_finished()
+		self.0.0.is_finished()
 	}
 
 	/// This will block until all associated threads are finished.
@@ -475,7 +475,7 @@ impl<T> ScopeJoinFuture<'_, '_, T> {
 	/// # let _ = test();
 	/// ```
 	pub fn join_all(self) -> T {
-		self.0 .0.join_all()
+		self.0.0.join_all()
 	}
 }
 

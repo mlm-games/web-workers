@@ -8,7 +8,7 @@ use std::ffi::OsString;
 use ui_test::custom_flags::rustfix::RustfixMode;
 use ui_test::dependencies::DependencyBuilder;
 use ui_test::status_emitter::Text;
-use ui_test::{ignore_output_conflict, Args, Config, Format};
+use ui_test::{Args, Config, Format, ignore_output_conflict};
 
 #[test]
 fn test() {

@@ -7,12 +7,12 @@ use std::io::Error;
 use std::marker::PhantomData;
 
 use js_sys::{Array, Iterator, JsString, Object};
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{AudioWorkletNodeOptions, DomException};
 
-use super::js::ProcessorOptions;
 use super::Data;
+use super::js::ProcessorOptions;
 use crate::web::audio_worklet::ExtendAudioWorkletProcessor;
 
 /// Implementation for

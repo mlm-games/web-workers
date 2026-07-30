@@ -6,8 +6,8 @@ use js_sys::{Atomics, Int32Array, Object, Reflect, SharedArrayBuffer};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_workers::web;
 use web_time::Duration;
+use web_workers::web;
 
 #[wasm_bindgen_test]
 fn park_no_op() {

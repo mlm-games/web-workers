@@ -6,7 +6,7 @@ use std::sync::mpsc;
 use futures_util::future::{self, Either};
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web::{JoinHandleExt, ScopedJoinHandleExt};
-use web_workers::{web, JoinHandle};
+use web_workers::{JoinHandle, web};
 
 use super::util::{self, Flag, SIGNAL_DURATION};
 

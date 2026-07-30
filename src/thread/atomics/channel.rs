@@ -2,8 +2,8 @@
 
 use std::fmt::{self, Debug, Formatter};
 use std::future;
-use std::sync::mpsc::{self, RecvError, SendError, TryRecvError};
 use std::sync::Arc;
+use std::sync::mpsc::{self, RecvError, SendError, TryRecvError};
 use std::task::Poll;
 
 use atomic_waker::AtomicWaker;

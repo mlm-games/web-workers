@@ -4,13 +4,13 @@ use std::cell::OnceCell;
 use std::ptr::NonNull;
 
 use js_sys::{Array, Function};
-use wasm_bindgen::prelude::{wasm_bindgen, JsValue};
+use wasm_bindgen::prelude::{JsValue, wasm_bindgen};
 use web_sys::{BaseAudioContext, MessagePort};
 
+use super::super::super::Thread;
 use super::super::super::memory::ThreadMemory;
 use super::super::super::oneshot::Sender;
 use super::super::super::spawn::message::HasMessagePortInterface;
-use super::super::super::Thread;
 use super::RegisterThreadFuture;
 use crate::web::message::{ArrayBuilder, MessageSend};
 

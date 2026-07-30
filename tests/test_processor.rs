@@ -12,8 +12,8 @@ use std::cell::{OnceCell, RefCell};
 use std::marker::PhantomData;
 
 use js_sys::{Array, Iterator, Object};
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{AudioWorkletNodeOptions, AudioWorkletProcessor};
 use web_workers::web::audio_worklet::ExtendAudioWorkletProcessor;
 

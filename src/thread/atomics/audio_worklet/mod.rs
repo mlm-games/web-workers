@@ -10,8 +10,8 @@ use std::any::{Any, TypeId};
 use std::ptr::NonNull;
 
 use js_sys::{JsString, Object, Reflect};
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{AudioWorkletNode, AudioWorkletNodeOptions, BaseAudioContext};
 
 use self::js::{BaseAudioContextExt, ProcessorOptions};
@@ -19,7 +19,7 @@ pub(in super::super) use self::processor::register_processor;
 #[cfg(feature = "message")]
 pub(in super::super) use self::register::message::register_thread_with_message;
 pub(in super::super) use self::register::{
-	register_thread, AudioWorkletHandle, RegisterThreadFuture,
+	AudioWorkletHandle, RegisterThreadFuture, register_thread,
 };
 pub(in super::super) use super::is_main_thread;
 use crate::web::audio_worklet::{AudioWorkletNodeError, ExtendAudioWorkletProcessor};

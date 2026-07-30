@@ -7,11 +7,11 @@ use std::task::{Context, Poll};
 
 use web_sys::{AudioWorkletNode, AudioWorkletNodeOptions, BaseAudioContext};
 
+use super::Thread;
 #[cfg(target_feature = "atomics")]
 use super::atomics::audio_worklet;
 #[cfg(not(target_feature = "atomics"))]
 use super::unsupported::audio_worklet;
-use super::Thread;
 use crate::web::audio_worklet::{AudioWorkletNodeError, ExtendAudioWorkletProcessor};
 #[cfg(feature = "message")]
 use crate::web::message::MessageSend;

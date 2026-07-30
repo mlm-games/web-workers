@@ -21,13 +21,13 @@ use web_sys::{AudioWorkletNode, AudioWorkletNodeOptions, AudioWorkletProcessor};
 
 #[cfg(any(feature = "message", docsrs))]
 use super::message::MessageSend;
+use crate::Thread;
 #[cfg(all(
 	target_family = "wasm",
 	target_os = "unknown",
 	feature = "audio-worklet"
 ))]
 use crate::thread::audio_worklet;
-use crate::Thread;
 
 #[cfg(not(all(
 	target_family = "wasm",

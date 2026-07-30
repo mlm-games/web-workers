@@ -3,8 +3,8 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::pin::Pin;
-use std::sync::atomic::AtomicI32;
 use std::sync::OnceLock;
+use std::sync::atomic::AtomicI32;
 
 use web_sys::Worker;
 #[cfg(feature = "message")]

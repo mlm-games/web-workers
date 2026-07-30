@@ -5,13 +5,13 @@ use std::future::{Future, Ready};
 use std::marker::PhantomData;
 use std::ops::Deref;
 use std::pin::Pin;
-use std::task::{ready, Context, Poll};
+use std::task::{Context, Poll, ready};
 use std::{any, mem, thread};
 
 use pin_project::{pin_project, pinned_drop};
 
 use super::r#impl::JoinHandle;
-use super::{r#impl, Builder, Thread};
+use super::{Builder, Thread, r#impl};
 #[cfg(feature = "message")]
 use crate::web::message::MessageSend;
 

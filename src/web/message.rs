@@ -10,8 +10,8 @@ use js_sys::Array;
 #[cfg(all(target_family = "wasm", target_os = "unknown"))]
 use js_sys::{
 	ArrayBuffer, BigInt, BigInt64Array, BigUint64Array, Boolean, DataView, Date, Error,
-	Float32Array, Float64Array, Int16Array, Int32Array, Int8Array, JsString, Map, Number, RegExp,
-	Set, Uint16Array, Uint32Array, Uint8Array, Uint8ClampedArray,
+	Float32Array, Float64Array, Int8Array, Int16Array, Int32Array, JsString, Map, Number, RegExp,
+	Set, Uint8Array, Uint8ClampedArray, Uint16Array, Uint32Array,
 };
 use wasm_bindgen::{JsCast, JsValue};
 #[cfg(all(

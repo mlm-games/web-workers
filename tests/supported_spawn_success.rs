@@ -8,8 +8,8 @@ use web_workers::{Builder, Scope};
 #[cfg(target_family = "wasm")]
 use {
 	wasm_bindgen_test::wasm_bindgen_test,
-	web_workers::web::{self, BuilderExt, JoinHandleExt, ScopeExt, ScopedJoinHandleExt},
 	web_time as time,
+	web_workers::web::{self, BuilderExt, JoinHandleExt, ScopeExt, ScopedJoinHandleExt},
 };
 
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
@@ -17,7 +17,10 @@ use {
 async fn park() {
 	let start = Instant::now();
 
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = web_workers::spawn(|| {
 		web_workers::park();
 		web_workers::park_timeout(Duration::from_secs(1));
@@ -46,7 +49,10 @@ async fn park() {
 async fn sleep() {
 	let start = Instant::now();
 
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = web_workers::spawn(|| {
 		web_workers::sleep(Duration::from_secs(1));
 		#[expect(deprecated, reason = "testing deprecated API")]
@@ -69,7 +75,10 @@ async fn sleep() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn spawn() {
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = web_workers::spawn(|| ());
 
 	#[cfg(not(target_family = "wasm"))]
@@ -85,7 +94,10 @@ async fn spawn() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn nested() {
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = web_workers::spawn(|| web_workers::spawn(|| ()));
 
 	#[cfg(not(target_family = "wasm"))]
@@ -151,7 +163,10 @@ async fn scope_builder() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn builder() {
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = Builder::new()
 		.spawn(|| assert_eq!(web_workers::current().name(), None))
 		.unwrap();
@@ -169,7 +184,10 @@ async fn builder() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn builder_name() {
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = Builder::new()
 		.name(String::from("test"))
 		.spawn(|| assert_eq!(web_workers::current().name(), Some("test")))
@@ -188,13 +206,23 @@ async fn builder_name() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn builder_stack_size() {
-	#[expect(clippy::large_stack_frames, reason = "intentional large stack allocation")]
+	#[expect(
+		clippy::large_stack_frames,
+		reason = "intentional large stack allocation"
+	)]
 	fn allocate_on_stack() {
-		#[expect(clippy::large_stack_arrays, clippy::no_effect_underscore_binding, reason = "intentional large stack array")]
+		#[expect(
+			clippy::large_stack_arrays,
+			clippy::no_effect_underscore_binding,
+			reason = "intentional large stack array"
+		)]
 		let _test = [0_u8; 1024 * 1024 * 9];
 	}
 
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = Builder::new()
 		.stack_size(1024 * 1024 * 10)
 		.spawn(allocate_on_stack)
@@ -213,7 +241,10 @@ async fn builder_stack_size() {
 #[cfg_attr(not(target_family = "wasm"), pollster::test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn is_finished() {
-	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
+	#[cfg_attr(
+		not(target_family = "wasm"),
+		expect(unused_mut, reason = "conditional on platform")
+	)]
 	let mut handle = web_workers::spawn(|| {
 		web_workers::park();
 	});

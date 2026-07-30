@@ -16,7 +16,7 @@ use web_workers::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioConte
 use web_workers::web::{self, JoinHandleExt, YieldTime};
 
 use super::test_processor::{
-	AudioParameter, AudioWorkletNodeOptionsExt, TestProcessor, GLOBAL_DATA,
+	AudioParameter, AudioWorkletNodeOptionsExt, GLOBAL_DATA, TestProcessor,
 };
 use super::util::Flag;
 use crate::test_audio;

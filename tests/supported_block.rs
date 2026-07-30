@@ -5,7 +5,7 @@ use std::time;
 
 use time::{Duration, Instant};
 #[cfg(target_family = "wasm")]
-use {wasm_bindgen_test::wasm_bindgen_test, web_workers::web, web_time as time};
+use {wasm_bindgen_test::wasm_bindgen_test, web_time as time, web_workers::web};
 
 #[cfg_attr(not(target_family = "wasm"), test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]

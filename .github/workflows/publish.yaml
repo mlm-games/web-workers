@@ -3,23 +3,13 @@ name: Publish
 on:
   push:
     branches: ["main"]
-  pull_request:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name }}
-  cancel-in-progress: true
-
-env:
-  CARGO_TERM_COLOR: always
 
 jobs:
   publish:
-    name: Publish
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Test Publish
-        run: cargo publish --dry-run
+    uses: mlm-games/ci/.github/workflows/crate-publish.yml@v1
+    with:
+      publish-crates-io: true
+      create-release: true
+      auto-bump: true
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

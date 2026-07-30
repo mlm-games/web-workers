@@ -210,6 +210,9 @@ jobs:
       - run: rustup target add wasm32-unknown-unknown --toolchain ${{ matrix.rust.toolchain }}
       - if: matrix.rust.atomics
         run: rustup component add rust-src --toolchain nightly
+      # -Zbuild-std builds core/std from source; conflict with pre-installed wasm target.
+      - if: matrix.rust.atomics
+        run: cargo +${{ matrix.rust.toolchain }} clean
       - name: Set Driver
         run: echo "${{ matrix.driver.var }}=${{ matrix.driver.value }}" >> $GITHUB_ENV
       - name: Disable Cross-Origin-Isolation

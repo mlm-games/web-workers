@@ -16,6 +16,9 @@ on:
           - minor
           - major
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     uses: mlm-games/ci/.github/workflows/crate-publish.yml@main

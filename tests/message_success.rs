@@ -1,5 +1,5 @@
-#![cfg(test)]
-#![cfg(all(target_family = "wasm", feature = "message"))]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use js_sys::{ArrayBuffer, Uint8Array};
 use wasm_bindgen_test::wasm_bindgen_test;

@@ -1,4 +1,5 @@
-#![cfg(test)]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 #[cfg(target_family = "wasm")]
 use {wasm_bindgen_test::wasm_bindgen_test, web_workers::web};

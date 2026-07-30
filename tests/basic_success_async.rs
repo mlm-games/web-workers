@@ -1,5 +1,5 @@
-#![cfg(test)]
-#![cfg(target_family = "wasm")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use web_workers::web;
 

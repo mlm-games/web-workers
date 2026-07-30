@@ -1,4 +1,5 @@
-#![expect(missing_docs, reason = "test crate")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use std::fmt::Debug;
 use std::hash::Hash;

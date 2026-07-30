@@ -1,4 +1,5 @@
-#![expect(missing_docs, reason = "test crate")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 #[cfg(all(
 	target_family = "wasm",

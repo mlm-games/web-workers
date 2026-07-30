@@ -1,5 +1,5 @@
-#![cfg(test)]
-#![cfg(target_family = "wasm")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use js_sys::WebAssembly::Memory;
 use js_sys::{Atomics, Int32Array, Object, Reflect, SharedArrayBuffer};

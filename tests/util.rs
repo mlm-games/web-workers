@@ -2,6 +2,9 @@
 #![cfg(all(target_family = "wasm", target_feature = "atomics"))]
 #![allow(dead_code, unreachable_pub)]
 
+#[cfg(target_family = "wasm")]
+use minicov as _;
+
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;

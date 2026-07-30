@@ -1,4 +1,5 @@
-#![cfg(test)]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 #[cfg(not(target_family = "wasm"))]
 use std::time;

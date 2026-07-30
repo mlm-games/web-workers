@@ -1,10 +1,11 @@
-#![expect(missing_docs, reason = "test crate")]
-#![cfg(test)]
 #![cfg(all(
 	target_family = "wasm",
 	target_feature = "atomics",
 	not(unsupported_spawn)
 ))]
+
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 mod supported_spawn_corrupt;
 #[cfg(feature = "audio-worklet")]

@@ -1,5 +1,5 @@
-#![cfg(test)]
-#![cfg(all(target_family = "wasm", feature = "audio-worklet"))]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_sys::{AudioContext, OfflineAudioContext};

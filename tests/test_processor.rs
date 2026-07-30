@@ -1,5 +1,3 @@
-#![expect(missing_docs, reason = "test crate")]
-#![cfg(all(target_family = "wasm", feature = "audio-worklet"))]
 #![expect(
 	clippy::missing_panics_doc,
 	missing_copy_implementations,
@@ -7,6 +5,9 @@
 	unreachable_pub,
 	reason = "test support module"
 )]
+
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use std::cell::{OnceCell, RefCell};
 use std::marker::PhantomData;

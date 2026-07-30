@@ -1,5 +1,5 @@
-#![expect(missing_docs, reason = "test crate")]
-#![cfg(target_family = "wasm")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 mod basic_success;
 #[cfg(any(not(target_feature = "atomics"), not(unsupported_wait_async)))]

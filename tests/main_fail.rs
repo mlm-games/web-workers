@@ -1,5 +1,5 @@
-#![expect(missing_docs, reason = "test crate")]
-#![cfg(target_family = "wasm")]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 mod audio_worklet_fail;
 #[cfg(any(

@@ -1,5 +1,5 @@
-#![cfg(test)]
-#![cfg(all(target_family = "wasm", target_feature = "atomics"))]
+#[cfg(target_family = "wasm")]
+use minicov as _;
 
 use std::sync::mpsc;
 

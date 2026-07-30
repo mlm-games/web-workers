@@ -5,20 +5,20 @@ use std::time;
 
 use time::{Duration, Instant};
 #[cfg(target_family = "wasm")]
-use {wasm_bindgen_test::wasm_bindgen_test, web_thread::web, web_time as time};
+use {wasm_bindgen_test::wasm_bindgen_test, web_workers::web, web_time as time};
 
 #[cfg_attr(not(target_family = "wasm"), test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 fn park() {
 	let start = Instant::now();
 
-	let thread = web_thread::current();
+	let thread = web_workers::current();
 	thread.unpark();
 
-	web_thread::park();
-	web_thread::park_timeout(Duration::from_secs(1));
+	web_workers::park();
+	web_workers::park_timeout(Duration::from_secs(1));
 	#[expect(deprecated, reason = "testing deprecated API")]
-	web_thread::park_timeout_ms(1000);
+	web_workers::park_timeout_ms(1000);
 
 	let elapsed = start.elapsed();
 	// Geckodriver seems unable to measure the time correctly.
@@ -30,9 +30,9 @@ fn park() {
 fn sleep() {
 	let start = Instant::now();
 
-	web_thread::sleep(Duration::from_secs(1));
+	web_workers::sleep(Duration::from_secs(1));
 	#[expect(deprecated, reason = "testing deprecated API")]
-	web_thread::sleep_ms(1000);
+	web_workers::sleep_ms(1000);
 
 	let elapsed = start.elapsed();
 	// Geckodriver seems unable to measure the time correctly.

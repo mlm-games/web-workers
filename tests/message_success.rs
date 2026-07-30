@@ -3,9 +3,9 @@
 
 use js_sys::{ArrayBuffer, Uint8Array};
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_thread::web;
-use web_thread::web::message::TransferableWrapper;
-use web_thread::web::{JoinHandleExt, ScopeExt};
+use web_workers::web;
+use web_workers::web::message::TransferableWrapper;
+use web_workers::web::{JoinHandleExt, ScopeExt};
 
 #[wasm_bindgen_test]
 async fn spawn() {

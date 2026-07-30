@@ -1,4 +1,4 @@
-//! Platform-specific extensions for [`web-thread`](crate) on the Web platform
+//! Platform-specific extensions for [`web-workers`](crate) on the Web platform
 //! to send [`Serializable`] and [`Transferable`] to other threads.
 //!
 //! [`Serializable`]: https://developer.mozilla.org/en-US/docs/Glossary/Serializable_object
@@ -84,8 +84,8 @@ macro_rules! impl_for_tuples {
 /// use js_sys::{Array, ArrayBuffer};
 /// use wasm_bindgen::{JsCast, JsValue};
 /// use web_sys::{HtmlCanvasElement, OffscreenCanvas};
-/// use web_thread::web::{self, JoinHandleExt};
-/// use web_thread::web::message::{MessageSend, RawMessage};
+/// use web_workers::web::{self, JoinHandleExt};
+/// use web_workers::web::message::{MessageSend, RawMessage};
 ///
 /// struct Struct {
 /// 	a: u8,
@@ -437,8 +437,8 @@ impl Serializable for VideoFrame {}
 /// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 /// # async fn test() {
 /// use js_sys::ArrayBuffer;
-/// use web_thread::web::{self, JoinHandleExt};
-/// use web_thread::web::message::SerializableWrapper;
+/// use web_workers::web::{self, JoinHandleExt};
+/// use web_workers::web::message::SerializableWrapper;
 ///
 /// let message = SerializableWrapper(ArrayBuffer::new(1000));
 /// web::spawn_with_message(
@@ -576,8 +576,8 @@ impl<T: Into<JsValue> + JsCast + Transferable> MessageSend for TransferableWrapp
 /// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 /// # async fn test() {
 /// use std::sync::Arc;
-/// use web_thread::web::{self, JoinHandleExt};
-/// use web_thread::web::message::SendWrapper;
+/// use web_workers::web::{self, JoinHandleExt};
+/// use web_workers::web::message::SendWrapper;
 ///
 /// let data = Arc::new(vec![0, 1, 2, 3, 4]);
 /// let message = SendWrapper(Arc::clone(&data));
@@ -752,20 +752,20 @@ pub mod __internal {
 			pub trait $name<T> {
 				type Send;
 
-				fn __web_thread_send<E: Extend<JsValue>>(self, extend: &mut E) -> RawMessage<Self::Send>;
+				fn __web_workers_send<E: Extend<JsValue>>(self, extend: &mut E) -> RawMessage<Self::Send>;
 
-				fn __web_thread_receive(self, serialized: Option<JsValue>, sent: Option<Self::Send>) -> T;
+				fn __web_workers_receive(self, serialized: Option<JsValue>, sent: Option<Self::Send>) -> T;
 			}
 
 			#[allow(clippy::mut_mut)]
 			impl<T: $($bound+)+> $name<T> for $priority {
 				type Send = <$wrapper<T> as MessageSend>::Send;
 
-				fn __web_thread_send<E: Extend<JsValue>>(self, extend: &mut E) -> RawMessage<Self::Send> {
+				fn __web_workers_send<E: Extend<JsValue>>(self, extend: &mut E) -> RawMessage<Self::Send> {
 					$wrapper(self.take().expect("found empty `Option` while sending")).send(extend)
 				}
 
-				fn __web_thread_receive(self, serialized: Option<JsValue>, sent: Option<Self::Send>) -> T {
+				fn __web_workers_receive(self, serialized: Option<JsValue>, sent: Option<Self::Send>) -> T {
 					debug_assert!(self.is_none(), "found filled `Option` while receiving");
 					$wrapper::receive(serialized, sent).0
 				}

@@ -2,14 +2,14 @@
 #![cfg(target_family = "wasm")]
 
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_thread::web::{BuilderExt, ScopeExt};
-use web_thread::{web, Builder};
+use web_workers::web::{BuilderExt, ScopeExt};
+use web_workers::{web, Builder};
 
 #[wasm_bindgen_test]
 #[should_panic = "operation not supported on this platform without the atomics target feature and \
                   cross-origin isolation"]
 fn spawn() {
-	web_thread::spawn(|| ());
+	web_workers::spawn(|| ());
 }
 
 #[wasm_bindgen_test]
@@ -45,7 +45,7 @@ fn builder_async() {
 #[should_panic = "operation not supported on this platform without the atomics target feature and \
                   cross-origin isolation"]
 fn scope() {
-	web_thread::scope(|scope| {
+	web_workers::scope(|scope| {
 		scope.spawn(|| ());
 	});
 }
@@ -54,7 +54,7 @@ fn scope() {
 #[should_panic = "operation not supported on this platform without the atomics target feature and \
                   cross-origin isolation"]
 fn scope_builder() {
-	web_thread::scope(|scope| {
+	web_workers::scope(|scope| {
 		Builder::new().spawn_scoped(scope, || ()).unwrap();
 	});
 }
@@ -63,7 +63,7 @@ fn scope_builder() {
 #[should_panic = "operation not supported on this platform without the atomics target feature and \
                   cross-origin isolation"]
 fn scope_async() {
-	web_thread::scope(|scope| {
+	web_workers::scope(|scope| {
 		scope.spawn_async(|| async {});
 	});
 }
@@ -72,7 +72,7 @@ fn scope_async() {
 #[should_panic = "operation not supported on this platform without the atomics target feature and \
                   cross-origin isolation"]
 fn scope_builder_async() {
-	web_thread::scope(|scope| {
+	web_workers::scope(|scope| {
 		Builder::new()
 			.spawn_scoped_async(scope, || async {})
 			.unwrap();

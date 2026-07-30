@@ -674,7 +674,7 @@ impl Future for RegisterThreadFuture {
 
 					match AudioWorkletNode::new_with_options(
 						&context,
-						"__web_thread_worklet",
+						"__web_workers_worklet",
 						&options,
 					) {
 						Ok(node) => {
@@ -885,7 +885,7 @@ impl AudioWorkletHandle {
 #[wasm_bindgen(skip_typescript)]
 #[allow(unreachable_pub)]
 #[cfg_attr(not(feature = "message"), allow(clippy::needless_pass_by_value))]
-pub unsafe fn __web_thread_worklet_entry(
+pub unsafe fn __web_workers_worklet_entry(
 	task: NonNull<Task>,
 	message: JsValue,
 	#[cfg_attr(not(feature = "message"), allow(unused))] port: MessagePort,
@@ -896,7 +896,7 @@ pub unsafe fn __web_thread_worklet_entry(
 		.expect("found existing `MessagePort` in new thread");
 
 	// SAFETY: Has to be a valid pointer to a `Task`. We only call
-	// `__web_thread_worklet_entry` from `worklet.js`. The data sent to it comes
+	// `__web_workers_worklet_entry` from `worklet.js`. The data sent to it comes
 	// only from `RegisterThreadFuture::poll()`.
 	let task: Task = *unsafe { Box::from_raw(task.as_ptr()) };
 	task(message);

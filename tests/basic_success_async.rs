@@ -1,7 +1,7 @@
 #![cfg(test)]
 #![cfg(target_family = "wasm")]
 
-use web_thread::web;
+use web_workers::web;
 
 #[wasm_bindgen_test::wasm_bindgen_test]
 async fn yield_now() {
@@ -11,7 +11,7 @@ async fn yield_now() {
 	use wasm_bindgen::closure::Closure;
 	use wasm_bindgen::{JsCast, JsValue};
 	use web_sys::MessageChannel;
-	use web_thread::web::YieldTime;
+	use web_workers::web::YieldTime;
 
 	let channel = MessageChannel::new().unwrap();
 	let received = Rc::new(Cell::new(false));

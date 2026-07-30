@@ -105,7 +105,7 @@ pub(crate) fn register_processor<P: 'static + ExtendAudioWorkletProcessor>(
 	if audio_worklet::is_main_thread() {
 		Err(Error::new(
 			ErrorKind::Unsupported,
-			"thread was not spawned by `web-thread`",
+			"thread was not spawned by `web-workers`",
 		))
 	} else {
 		audio_worklet::register_processor::<P>(name)

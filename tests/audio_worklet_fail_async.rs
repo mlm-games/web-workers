@@ -2,7 +2,7 @@
 #![cfg(all(target_family = "wasm", feature = "audio-worklet"))]
 
 use web_sys::BaseAudioContext;
-use web_thread::web::audio_worklet::BaseAudioContextExt;
+use web_workers::web::audio_worklet::BaseAudioContextExt;
 
 #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
 use super::test_processor::TestProcessor;

@@ -3,7 +3,7 @@
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_sys::{AudioContext, OfflineAudioContext};
-use web_thread::web::audio_worklet::BaseAudioContextExt;
+use web_workers::web::audio_worklet::BaseAudioContextExt;
 
 use super::test_processor::TestProcessor;
 

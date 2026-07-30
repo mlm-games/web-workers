@@ -13,11 +13,11 @@ extern "C" {
 	pub(super) type BaseAudioContextExt;
 
 	/// Returns our custom `registered` property.
-	#[wasm_bindgen(method, getter, js_name = __web_thread_registered)]
+	#[wasm_bindgen(method, getter, js_name = __web_workers_registered)]
 	pub(super) fn registered(this: &BaseAudioContextExt) -> Option<bool>;
 
 	/// Sets our custom `registered` property.
-	#[wasm_bindgen(method, setter, js_name = __web_thread_registered)]
+	#[wasm_bindgen(method, setter, js_name = __web_workers_registered)]
 	pub(super) fn set_registered(this: &BaseAudioContextExt, value: bool);
 
 	/// Type for [`AudioWorkletNodeOptions.processorOptions`](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode/AudioWorkletNode#processoroptions).
@@ -26,10 +26,10 @@ extern "C" {
 	pub(super) type ProcessorOptions;
 
 	/// Returns our custom `data` property.
-	#[wasm_bindgen(method, getter, js_name = __web_thread_data)]
+	#[wasm_bindgen(method, getter, js_name = __web_workers_data)]
 	pub(super) fn data(this: &ProcessorOptions) -> Option<NonNull<Data>>;
 
 	/// Sets our custom `data` property.
-	#[wasm_bindgen(method, setter, js_name = __web_thread_data)]
+	#[wasm_bindgen(method, setter, js_name = __web_workers_data)]
 	pub(super) fn set_data(this: &ProcessorOptions, value: NonNull<Data>);
 }

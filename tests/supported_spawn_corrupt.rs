@@ -5,7 +5,7 @@ use std::hint;
 
 use futures_util::future;
 use futures_util::future::Either;
-use web_thread::Builder;
+use web_workers::Builder;
 
 use crate::util;
 use crate::util::{Flag, SIGNAL_DURATION};

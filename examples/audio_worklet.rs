@@ -31,10 +31,10 @@ mod web {
 		AudioWorkletProcessor, Blob, BlobPropertyBag, Document, HtmlButtonElement, HtmlElement,
 		HtmlInputElement, HtmlTableElement, HtmlTableRowElement, Url,
 	};
-	use web_thread::web::audio_worklet::{
+	use web_workers::web::audio_worklet::{
 		AudioWorkletGlobalScopeExt, BaseAudioContextExt, ExtendAudioWorkletProcessor,
 	};
-	use web_thread::web::{self, YieldTime};
+	use web_workers::web::{self, YieldTime};
 
 	/// `fn main` implementation.
 	pub(crate) fn main() {

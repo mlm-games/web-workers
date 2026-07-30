@@ -123,7 +123,7 @@ where
 						.expect("found audio worklet with uninitialized port");
 					send_message(port, &serialize, transfer)
 				}),
-				_ => unreachable!("spawning from thread not registered by `web-thread`"),
+				_ => unreachable!("spawning from thread not registered by `web-workers`"),
 			})?;
 		}
 

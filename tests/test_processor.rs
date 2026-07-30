@@ -15,7 +15,7 @@ use js_sys::{Array, Iterator, Object};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
 use web_sys::{AudioWorkletNodeOptions, AudioWorkletProcessor};
-use web_thread::web::audio_worklet::ExtendAudioWorkletProcessor;
+use web_workers::web::audio_worklet::ExtendAudioWorkletProcessor;
 
 thread_local! {
 	#[allow(clippy::type_complexity)]

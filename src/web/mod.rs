@@ -1,4 +1,4 @@
-//! Platform-specific extensions for [`web-thread`](crate) on the Web platform.
+//! Platform-specific extensions for [`web-workers`](crate) on the Web platform.
 
 #[cfg(any(feature = "audio-worklet", docsrs))]
 pub mod audio_worklet;
@@ -57,9 +57,9 @@ use crate::{Builder, JoinHandle, Scope, ScopedJoinHandle};
 /// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 /// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 /// # async fn test() {
-/// use web_thread::web::{self, JoinHandleExt};
+/// use web_workers::web::{self, JoinHandleExt};
 ///
-/// let mut handle = web_thread::spawn(|| String::from("test"));
+/// let mut handle = web_workers::spawn(|| String::from("test"));
 ///
 /// let result = if web::has_block_support() {
 /// 	handle.join().unwrap()
@@ -80,7 +80,7 @@ pub fn has_block_support() -> bool {
 ///
 /// # Notes
 ///
-/// [`web-thread`](crate) will consider the first thread it finds itself in the
+/// [`web-workers`](crate) will consider the first thread it finds itself in the
 /// "main thread". If Wasm is instantiated in a [dedicated worker], it will
 /// consider it as the "main thread".
 ///
@@ -103,8 +103,8 @@ pub fn has_block_support() -> bool {
 /// # #[wasm_bindgen_test::wasm_bindgen_test]
 /// # fn test() {
 /// fn schedule_fun(f: impl 'static + FnOnce() + Send) {
-/// 	if web_thread::web::has_spawn_support() {
-/// 		web_thread::spawn(f);
+/// 	if web_workers::web::has_spawn_support() {
+/// 		web_workers::spawn(f);
 /// 	} else {
 /// 		wasm_bindgen_futures::spawn_local(async { f() });
 /// 	}
@@ -118,7 +118,7 @@ pub fn has_spawn_support() -> bool {
 	thread::has_spawn_support()
 }
 
-/// Web-specific extension for [`web_thread::JoinHandle`](crate::JoinHandle).
+/// Web-specific extension for [`web_workers::JoinHandle`](crate::JoinHandle).
 pub trait JoinHandleExt<T> {
 	/// Async version of [`JoinHandle::join()`].
 	///
@@ -135,9 +135,9 @@ pub trait JoinHandleExt<T> {
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
-	/// use web_thread::web::JoinHandleExt;
+	/// use web_workers::web::JoinHandleExt;
 	///
-	/// web_thread::spawn(|| ()).join_async().await.unwrap();
+	/// web_workers::spawn(|| ()).join_async().await.unwrap();
 	/// # }
 	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
 	/// # let _ = test();
@@ -193,7 +193,7 @@ impl<T> Future for JoinHandleFuture<'_, T> {
 /// #
 /// let value = AtomicUsize::new(0);
 ///
-/// web_thread::web::scope_async(|scope| async {
+/// web_workers::web::scope_async(|scope| async {
 /// 	(0..3).for_each(|_| {
 /// 		scope.spawn(|| value.fetch_add(1, Ordering::Relaxed));
 /// 	});
@@ -269,7 +269,7 @@ impl<'scope, 'env, F, T> ScopeFuture<'scope, 'env, F, T> {
 	/// #
 	/// let value = AtomicUsize::new(0);
 	///
-	/// let future = web_thread::web::scope_async(|scope| async {
+	/// let future = web_workers::web::scope_async(|scope| async {
 	/// 	(0..3).for_each(|_| {
 	/// 		scope.spawn(|| value.fetch_add(1, Ordering::Relaxed));
 	/// 	});
@@ -291,7 +291,7 @@ impl<'scope, 'env, F, T> ScopeFuture<'scope, 'env, F, T> {
 }
 
 /// Web-specific extension for
-/// [`web_thread::ScopedJoinHandle`](crate::ScopedJoinHandle).
+/// [`web_workers::ScopedJoinHandle`](crate::ScopedJoinHandle).
 pub trait ScopedJoinHandleExt<'scope, T> {
 	/// Async version of [`ScopedJoinHandle::join()`].
 	///
@@ -308,7 +308,7 @@ pub trait ScopedJoinHandleExt<'scope, T> {
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
-	/// use web_thread::web::{self, ScopedJoinHandleExt};
+	/// use web_workers::web::{self, ScopedJoinHandleExt};
 	///
 	/// web::scope_async(|scope| async {
 	/// 	scope.spawn(|| ()).join_async().await.unwrap();
@@ -458,7 +458,7 @@ impl<T> ScopeJoinFuture<'_, '_, T> {
 	/// #
 	/// let value = AtomicUsize::new(0);
 	///
-	/// let future = web_thread::web::scope_async(|scope| async {
+	/// let future = web_workers::web::scope_async(|scope| async {
 	/// 	(0..3).for_each(|_| {
 	/// 		scope.spawn(|| value.fetch_add(1, Ordering::Relaxed));
 	/// 	});
@@ -479,7 +479,7 @@ impl<T> ScopeJoinFuture<'_, '_, T> {
 	}
 }
 
-/// Web-specific extension for [`web_thread::Builder`](crate::Builder).
+/// Web-specific extension for [`web_workers::Builder`](crate::Builder).
 pub trait BuilderExt {
 	/// Async version of [`Builder::spawn()`].
 	///
@@ -611,7 +611,7 @@ impl BuilderExt for Builder {
 	}
 }
 
-/// Web-specific extension for [`web_thread::Scope`](crate::Scope).
+/// Web-specific extension for [`web_workers::Scope`](crate::Scope).
 pub trait ScopeExt<'scope> {
 	/// Async version of [`Scope::spawn()`].
 	///
@@ -637,7 +637,7 @@ pub trait ScopeExt<'scope> {
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
-	/// use web_thread::web::{self, ScopeExt};
+	/// use web_workers::web::{self, ScopeExt};
 	///
 	/// let (sender, receiver) = async_channel::unbounded::<usize>();
 	///
@@ -742,12 +742,12 @@ impl<'scope> ScopeExt<'scope> for Scope<'scope, '_> {
 /// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 /// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 /// # async fn test() {
-/// # use web_thread::web::JoinHandleExt;
+/// # use web_workers::web::JoinHandleExt;
 /// #
 /// let (sender, receiver) = async_channel::unbounded::<usize>();
 ///
 /// # let mut handle =
-/// web_thread::web::spawn_async(move || async move {
+/// web_workers::web::spawn_async(move || async move {
 /// 	while let Ok(message) = receiver.recv().await {
 /// 		web_sys::console::log_1(&message.into());
 /// 	}
@@ -793,8 +793,8 @@ where
 /// # async fn test() {
 /// # use wasm_bindgen::JsCast;
 /// use web_sys::{HtmlCanvasElement, OffscreenCanvas};
-/// use web_thread::web::{self, JoinHandleExt};
-/// use web_thread::web::message::TransferableWrapper;
+/// use web_workers::web::{self, JoinHandleExt};
+/// use web_workers::web::message::TransferableWrapper;
 ///
 /// # let canvas = web_sys::window().unwrap().document().unwrap().create_element("canvas").unwrap().unchecked_into();
 /// let canvas: HtmlCanvasElement = canvas;
@@ -843,7 +843,7 @@ where
 /// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 /// # #[wasm_bindgen_test::wasm_bindgen_test]
 /// # async fn test() {
-/// use web_thread::web::{self, YieldTime};
+/// use web_workers::web::{self, YieldTime};
 ///
 /// # fn long_running_task() -> bool { false }
 /// while long_running_task() {

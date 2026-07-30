@@ -4,10 +4,10 @@
 use js_sys::{ArrayBuffer, Uint8Array};
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_sys::OfflineAudioContext;
-use web_thread::web;
-use web_thread::web::audio_worklet::BaseAudioContextExt;
-use web_thread::web::message::TransferableWrapper;
-use web_thread::web::JoinHandleExt;
+use web_workers::web;
+use web_workers::web::audio_worklet::BaseAudioContextExt;
+use web_workers::web::message::TransferableWrapper;
+use web_workers::web::JoinHandleExt;
 
 use super::util::Flag;
 

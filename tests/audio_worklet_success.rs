@@ -12,8 +12,8 @@ use web_sys::{
 	AudioContext, AudioWorkletGlobalScope, AudioWorkletNode, AudioWorkletNodeOptions,
 	BaseAudioContext, OfflineAudioContext,
 };
-use web_thread::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt};
-use web_thread::web::{self, JoinHandleExt, YieldTime};
+use web_workers::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt};
+use web_workers::web::{self, JoinHandleExt, YieldTime};
 
 use super::test_processor::{
 	AudioParameter, AudioWorkletNodeOptionsExt, TestProcessor, GLOBAL_DATA,
@@ -26,7 +26,7 @@ async fn test_nested(context: BaseAudioContext) {
 	context
 		.clone()
 		.register_thread(None, move || {
-			sender.try_send(web_thread::spawn(|| ())).unwrap();
+			sender.try_send(web_workers::spawn(|| ())).unwrap();
 		})
 		.await
 		.unwrap();
@@ -206,7 +206,7 @@ async fn test_unpark(context: BaseAudioContext) {
 			Box::new({
 				let end = end.clone();
 				move |_| {
-					web_thread::park();
+					web_workers::park();
 					end.signal();
 					None
 				}

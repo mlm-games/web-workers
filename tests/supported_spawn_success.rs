@@ -4,11 +4,11 @@
 use std::time;
 
 use time::{Duration, Instant};
-use web_thread::{Builder, Scope};
+use web_workers::{Builder, Scope};
 #[cfg(target_family = "wasm")]
 use {
 	wasm_bindgen_test::wasm_bindgen_test,
-	web_thread::web::{self, BuilderExt, JoinHandleExt, ScopeExt, ScopedJoinHandleExt},
+	web_workers::web::{self, BuilderExt, JoinHandleExt, ScopeExt, ScopedJoinHandleExt},
 	web_time as time,
 };
 
@@ -18,11 +18,11 @@ async fn park() {
 	let start = Instant::now();
 
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
-	let mut handle = web_thread::spawn(|| {
-		web_thread::park();
-		web_thread::park_timeout(Duration::from_secs(1));
+	let mut handle = web_workers::spawn(|| {
+		web_workers::park();
+		web_workers::park_timeout(Duration::from_secs(1));
 		#[expect(deprecated, reason = "testing deprecated API")]
-		web_thread::park_timeout_ms(1000);
+		web_workers::park_timeout_ms(1000);
 	});
 
 	handle.thread().unpark();
@@ -47,10 +47,10 @@ async fn sleep() {
 	let start = Instant::now();
 
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
-	let mut handle = web_thread::spawn(|| {
-		web_thread::sleep(Duration::from_secs(1));
+	let mut handle = web_workers::spawn(|| {
+		web_workers::sleep(Duration::from_secs(1));
 		#[expect(deprecated, reason = "testing deprecated API")]
-		web_thread::sleep_ms(1000);
+		web_workers::sleep_ms(1000);
 	});
 
 	#[cfg(not(target_family = "wasm"))]
@@ -70,7 +70,7 @@ async fn sleep() {
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn spawn() {
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
-	let mut handle = web_thread::spawn(|| ());
+	let mut handle = web_workers::spawn(|| ());
 
 	#[cfg(not(target_family = "wasm"))]
 	handle.join().unwrap();
@@ -86,7 +86,7 @@ async fn spawn() {
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn nested() {
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
-	let mut handle = web_thread::spawn(|| web_thread::spawn(|| ()));
+	let mut handle = web_workers::spawn(|| web_workers::spawn(|| ()));
 
 	#[cfg(not(target_family = "wasm"))]
 	handle.join().unwrap().join().unwrap();
@@ -110,10 +110,10 @@ async fn scope() {
 	});
 
 	#[cfg(not(target_family = "wasm"))]
-	web_thread::scope(task);
+	web_workers::scope(task);
 	#[cfg(target_family = "wasm")]
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
-		web_thread::scope(task);
+		web_workers::scope(task);
 	} else {
 		web::scope_async(move |scope| async move {
 			task(scope);
@@ -134,10 +134,10 @@ async fn scope_builder() {
 	});
 
 	#[cfg(not(target_family = "wasm"))]
-	web_thread::scope(task);
+	web_workers::scope(task);
 	#[cfg(target_family = "wasm")]
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
-		web_thread::scope(task);
+		web_workers::scope(task);
 	} else {
 		web::scope_async(move |scope| async move {
 			task(scope);
@@ -153,7 +153,7 @@ async fn scope_builder() {
 async fn builder() {
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
 	let mut handle = Builder::new()
-		.spawn(|| assert_eq!(web_thread::current().name(), None))
+		.spawn(|| assert_eq!(web_workers::current().name(), None))
 		.unwrap();
 
 	#[cfg(not(target_family = "wasm"))]
@@ -172,7 +172,7 @@ async fn builder_name() {
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
 	let mut handle = Builder::new()
 		.name(String::from("test"))
-		.spawn(|| assert_eq!(web_thread::current().name(), Some("test")))
+		.spawn(|| assert_eq!(web_workers::current().name(), Some("test")))
 		.unwrap();
 
 	#[cfg(not(target_family = "wasm"))]
@@ -214,8 +214,8 @@ async fn builder_stack_size() {
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 async fn is_finished() {
 	#[cfg_attr(not(target_family = "wasm"), expect(unused_mut, reason = "conditional on platform"))]
-	let mut handle = web_thread::spawn(|| {
-		web_thread::park();
+	let mut handle = web_workers::spawn(|| {
+		web_workers::park();
 	});
 
 	assert!(!handle.is_finished());
@@ -234,7 +234,7 @@ async fn is_finished() {
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen_test]
 async fn join_async() {
-	web_thread::spawn(|| ()).join_async().await.unwrap();
+	web_workers::spawn(|| ()).join_async().await.unwrap();
 }
 
 #[cfg(target_family = "wasm")]
@@ -246,7 +246,7 @@ fn has_thread_support() {
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen_test]
 async fn spawn_async() {
-	let mut handle = web::spawn_async(|| async { assert_eq!(web_thread::current().name(), None) });
+	let mut handle = web::spawn_async(|| async { assert_eq!(web_workers::current().name(), None) });
 
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
 		handle.join().unwrap();
@@ -259,7 +259,7 @@ async fn spawn_async() {
 #[wasm_bindgen_test]
 async fn builder_async() {
 	let mut handle = Builder::new()
-		.spawn_async(|| async { assert_eq!(web_thread::current().name(), None) })
+		.spawn_async(|| async { assert_eq!(web_workers::current().name(), None) })
 		.unwrap();
 
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
@@ -279,7 +279,7 @@ async fn scope_spawn_async() {
 	});
 
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
-		web_thread::scope(task);
+		web_workers::scope(task);
 	} else {
 		web::scope_async(move |scope| async move {
 			task(scope);
@@ -302,7 +302,7 @@ async fn scope_builder_async() {
 	});
 
 	if web::has_block_support() && cfg!(not(unsupported_spawn_then_block)) {
-		web_thread::scope(task);
+		web_workers::scope(task);
 	} else {
 		web::scope_async(move |scope| async move {
 			task(scope);

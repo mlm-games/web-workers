@@ -29,7 +29,7 @@ use crate::web::audio_worklet::{AudioWorkletNodeError, ExtendAudioWorkletProcess
 extern "C" {
 	/// Name of our custom property on [`AudioWorkletNodeOptions`].
 	#[wasm_bindgen(thread_local_v2, static_string)]
-	static DATA_PROPERTY_NAME: JsString = "__web_thread_data";
+	static DATA_PROPERTY_NAME: JsString = "__web_workers_data";
 
 	/// Name of the
 	/// [`AudioWorkletNodeOptions.processorOptions`](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode/AudioWorkletNode#processoroptions)
@@ -77,7 +77,7 @@ pub(in super::super) fn audio_worklet_node<P: 'static + ExtendAudioWorkletProces
 	let result = AudioWorkletNode::new_with_options(context, name, options);
 
 	if has_processor_options {
-		// If the caller provided processorOptions, clean up __web_thread_data
+		// If the caller provided processorOptions, clean up __web_workers_data
 		// that we added inside it (so repeated calls don't leak).
 		DATA_PROPERTY_NAME
 			.with(|name| Reflect::delete_property(&processor_options, name))

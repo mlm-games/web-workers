@@ -347,9 +347,9 @@ type TaskStatic = Task<'static>;
 /// `task` has to be a valid pointer to [`Task`].
 #[wasm_bindgen(skip_typescript)]
 #[allow(unreachable_pub)]
-pub async unsafe fn __web_thread_worker_entry(task: NonNull<TaskStatic>, message: JsValue) -> u32 {
+pub async unsafe fn __web_workers_worker_entry(task: NonNull<TaskStatic>, message: JsValue) -> u32 {
 	// SAFETY: Has to be a valid pointer to a `Task`. We only call
-	// `__web_thread_worker_entry` from `worker.js`. The data sent to it comes only
+	// `__web_workers_worker_entry` from `worker.js`. The data sent to it comes only
 	// from `spawn_internal()`.
 	let task: Task<'_> = *unsafe { Box::from_raw(task.as_ptr()) };
 	task(message).await

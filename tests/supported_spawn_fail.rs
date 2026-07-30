@@ -5,15 +5,15 @@ use std::sync::mpsc;
 
 use futures_util::future::{self, Either};
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_thread::web::{JoinHandleExt, ScopedJoinHandleExt};
-use web_thread::{web, JoinHandle};
+use web_workers::web::{JoinHandleExt, ScopedJoinHandleExt};
+use web_workers::{web, JoinHandle};
 
 use super::util::{self, Flag, SIGNAL_DURATION};
 
 #[wasm_bindgen_test]
 #[should_panic = "`JoinHandle::join()` called after `JoinHandleFuture` polled to completion"]
 async fn join_after_await() {
-	let mut handle = web_thread::spawn(|| ());
+	let mut handle = web_workers::spawn(|| ());
 	handle.join_async().await.unwrap();
 	let _ = handle.join();
 }
@@ -22,7 +22,7 @@ async fn join_after_await() {
 async fn join_circular() {
 	let flag = Flag::new();
 	let (sender, receiver) = mpsc::channel();
-	let handle = web_thread::spawn({
+	let handle = web_workers::spawn({
 		let flag = flag.clone();
 		move || {
 			let handle: JoinHandle<()> = receiver.recv().unwrap();
@@ -61,7 +61,7 @@ async fn join_async_circular() {
 #[wasm_bindgen_test]
 #[should_panic = "`JoinHandleFuture` polled or created after completion"]
 async fn join_async() {
-	let mut handle = web_thread::spawn(|| ());
+	let mut handle = web_workers::spawn(|| ());
 	handle.join_async().await.unwrap();
 	let _ = handle.join_async().await;
 }

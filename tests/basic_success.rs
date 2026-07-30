@@ -1,18 +1,18 @@
 #![cfg(test)]
 
 #[cfg(target_family = "wasm")]
-use {wasm_bindgen_test::wasm_bindgen_test, web_thread::web};
+use {wasm_bindgen_test::wasm_bindgen_test, web_workers::web};
 
 #[cfg_attr(not(target_family = "wasm"), test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 fn available_parallelism() {
-	web_thread::available_parallelism().unwrap();
+	web_workers::available_parallelism().unwrap();
 }
 
 #[cfg_attr(not(target_family = "wasm"), test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 fn thread() {
-	let thread = web_thread::current();
+	let thread = web_workers::current();
 	let _ = thread.id();
 	let _ = thread.name();
 }
@@ -20,7 +20,7 @@ fn thread() {
 #[cfg_attr(not(target_family = "wasm"), test)]
 #[cfg_attr(target_family = "wasm", wasm_bindgen_test)]
 fn panicking() {
-	assert!(!web_thread::panicking());
+	assert!(!web_workers::panicking());
 }
 
 #[cfg_attr(not(target_family = "wasm"), test)]
@@ -28,7 +28,7 @@ fn panicking() {
 fn scope() {
 	let mut test = 0;
 
-	web_thread::scope(|_| test = 1);
+	web_workers::scope(|_| test = 1);
 
 	assert_eq!(test, 1);
 }

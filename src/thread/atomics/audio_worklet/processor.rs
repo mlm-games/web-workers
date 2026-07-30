@@ -24,7 +24,7 @@ pub(in super::super::super) fn register_processor<P: 'static + ExtendAudioWorkle
 		JsString::from_code_point(name.chars().map(u32::from).collect::<Vec<_>>().as_slice())
 			.expect("found invalid Unicode");
 
-	__web_thread_register_processor(
+	__web_workers_register_processor(
 		name,
 		__WebThreadProcessorConstructor(Box::new(ProcessorConstructorWrapper::<P>(PhantomData))),
 	)
@@ -89,7 +89,7 @@ impl<P: 'static + ExtendAudioWorkletProcessor> ProcessorConstructor
 			let processor_options: ProcessorOptions = processor_options.unchecked_into();
 
 			if let Some(data) = processor_options.data() {
-				// SAFETY: We only store `NonNull<Data>` in `__web_thread_data` at
+				// SAFETY: We only store `NonNull<Data>` in `__web_workers_data` at
 				// `super::audio_worklet_node()`.
 				let data: Data = *unsafe { Box::<Data>::from_raw(data.as_ptr()) };
 
@@ -144,7 +144,7 @@ impl __WebThreadProcessor {
 #[allow(unreachable_pub)]
 extern "C" {
 	#[wasm_bindgen(catch)]
-	fn __web_thread_register_processor(
+	fn __web_workers_register_processor(
 		name: JsString,
 		processor: __WebThreadProcessorConstructor,
 	) -> Result<(), DomException>;

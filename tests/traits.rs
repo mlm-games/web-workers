@@ -8,7 +8,7 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 #[cfg(target_family = "wasm")]
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_thread::{Builder, JoinHandle, Scope, ScopedJoinHandle, Thread, ThreadId};
+use web_workers::{Builder, JoinHandle, Scope, ScopedJoinHandle, Thread, ThreadId};
 
 #[cfg(target_family = "wasm")]
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
@@ -39,7 +39,7 @@ const fn basic() {
 #[wasm_bindgen_test]
 const fn web() {
 	use static_assertions::assert_obj_safe;
-	use web_thread::web::{
+	use web_workers::web::{
 		JoinHandleExt, JoinHandleFuture, ScopeFuture, ScopeIntoJoinFuture, ScopeJoinFuture,
 		ScopedJoinHandleExt, ScopedJoinHandleFuture, YieldNowFuture, YieldTime,
 	};
@@ -74,7 +74,7 @@ const fn web() {
 		use std::fmt::Display;
 
 		use web_sys::{AudioWorkletNodeOptions, AudioWorkletProcessor};
-		use web_thread::web::audio_worklet::{
+		use web_workers::web::audio_worklet::{
 			AudioWorkletHandle, AudioWorkletNodeError, ExtendAudioWorkletProcessor,
 			RegisterThreadFuture, ReleaseError,
 		};

@@ -5,7 +5,7 @@
 //! - Wrap `MessageChannel` into something safe.
 //! - Consider passing message into `Builder`.
 //! - Add README.
-//! - Consider moving some APIs into `web-thread-core/primitives`.
+//! - Consider moving some APIs into `web-workers-core/primitives`.
 //!
 //! Things to note:
 //! - Will fail on import when used with the `no-modules` target.
@@ -13,7 +13,7 @@
 //! - Audio worklets are very limited, e.g. should not do any allocation.
 //! - Spawning happens on the "main" thread, e.g. if blocked nothing will spawn
 //!   (affects some browsers only).
-//! - Calling any functions from a thread not spawned by `web-thread` will cause
+//! - Calling any functions from a thread not spawned by `web-workers` will cause
 //!   issues.
 //! - Wasm threads/atomics are now broadly supported (Baseline 2025+), but still
 //!   require cross-origin isolation for `SharedArrayBuffer`.

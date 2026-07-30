@@ -1,7 +1,7 @@
 //@only-target: wasm32-unknown-unknown
 
 fn test() {
-	web_thread::web::scope_async(|scope| async {
+	web_workers::web::scope_async(|scope| async {
 		scope.spawn(|| {
 			let mut test = 0;
 

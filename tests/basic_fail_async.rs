@@ -1,6 +1,6 @@
 #![cfg(target_family = "wasm")]
 
-use web_thread::web::{self, YieldTime};
+use web_workers::web::{self, YieldTime};
 
 #[wasm_bindgen_test::wasm_bindgen_test]
 #[should_panic = "`YieldNowFuture` polled after completion"]

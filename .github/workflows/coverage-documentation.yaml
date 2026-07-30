@@ -70,7 +70,7 @@ jobs:
             --cfg=unsupported_spawn_then_block ${{ matrix.mt.flags }}
         run: |
           mkdir coverage-input
-          crate_name=web_thread
+          crate_name=web_workers
           IFS=$'\n'
           for file in $(
             cargo test --all-features --target wasm32-unknown-unknown -Ztarget-applies-to-host -Zhost-config ${{ matrix.mt.args }} --tests --no-run --message-format=json | \
@@ -186,7 +186,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}doc/web_thread
+      url: ${{ steps.deployment.outputs.page_url }}doc/web_workers
 
     runs-on: ubuntu-latest
 

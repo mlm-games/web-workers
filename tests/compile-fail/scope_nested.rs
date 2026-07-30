@@ -1,5 +1,5 @@
 fn test() {
-	web_thread::scope(|scope| {
+	web_workers::scope(|scope| {
 		scope.spawn(|| {
 			let mut test = 0;
 

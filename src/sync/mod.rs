@@ -25,7 +25,7 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen(inline_js = "
-export function _web_thread_supportsAtomicsWait() {
+export function _web_workers_supportsAtomicsWait() {
     if (typeof SharedArrayBuffer === 'undefined') return false;
     if (typeof Atomics === 'undefined' || typeof Atomics.wait !== 'function') return false;
     try {
@@ -39,10 +39,10 @@ export function _web_thread_supportsAtomicsWait() {
 }
 ")]
 extern "C" {
-    fn _web_thread_supportsAtomicsWait() -> bool;
+    fn _web_workers_supportsAtomicsWait() -> bool;
 }
 
 #[cfg(target_arch = "wasm32")]
 pub(crate) fn atomics_wait_supported() -> bool {
-    _web_thread_supportsAtomicsWait()
+    _web_workers_supportsAtomicsWait()
 }

@@ -3,7 +3,7 @@
 use std::pin::pin;
 
 use wasm_bindgen_test::wasm_bindgen_test;
-use web_thread::web;
+use web_workers::web;
 
 #[wasm_bindgen_test]
 #[should_panic = "`ScopeFuture` polled after completion"]

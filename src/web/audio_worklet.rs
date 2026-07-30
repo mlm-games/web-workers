@@ -1,4 +1,4 @@
-//! Platform-specific extensions for [`web-thread`](crate) on the Web platform
+//! Platform-specific extensions for [`web-workers`](crate) on the Web platform
 //! to spawn and use audio worklets. See
 //! [`BaseAudioContextExt::audio_worklet_node()`] for a usage example.
 
@@ -93,7 +93,7 @@ pub trait BaseAudioContextExt {
 	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use web_sys::AudioContext;
-	/// use web_thread::web::audio_worklet::BaseAudioContextExt;
+	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
 	///
 	/// let context = AudioContext::new().unwrap();
 	/// context.clone().register_thread(
@@ -144,8 +144,8 @@ pub trait BaseAudioContextExt {
 	/// # async fn test() {
 	/// use js_sys::ArrayBuffer;
 	/// use web_sys::AudioContext;
-	/// use web_thread::web::audio_worklet::BaseAudioContextExt;
-	/// use web_thread::web::message::TransferableWrapper;
+	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
+	/// use web_workers::web::message::TransferableWrapper;
 	///
 	/// let context = AudioContext::new().unwrap();
 	/// let buffer = TransferableWrapper(ArrayBuffer::new(1024));
@@ -208,8 +208,8 @@ pub trait BaseAudioContextExt {
 	/// # async fn test() {
 	/// # use wasm_bindgen::JsCast;
 	/// use web_sys::{AudioContext, AudioWorkletGlobalScope, AudioWorkletNodeOptions, AudioWorkletProcessor};
-	/// use web_thread::web::{self, YieldTime};
-	/// use web_thread::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt, ExtendAudioWorkletProcessor};
+	/// use web_workers::web::{self, YieldTime};
+	/// use web_workers::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt, ExtendAudioWorkletProcessor};
 	///
 	/// /// Example [`AudioWorkletProcessor`].
 	/// struct TestProcessor;
@@ -390,7 +390,7 @@ impl AudioWorkletHandle {
 	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use web_sys::{AudioContext, console};
-	/// use web_thread::web::audio_worklet::BaseAudioContextExt;
+	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
 	///
 	/// let context = AudioContext::new().unwrap();
 	/// let handle = context.clone().register_thread(
@@ -431,7 +431,7 @@ impl AudioWorkletHandle {
 	/// # async fn test() {
 	/// use wasm_bindgen_futures::JsFuture;
 	/// use web_sys::AudioContext;
-	/// use web_thread::web::audio_worklet::BaseAudioContextExt;
+	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
 	///
 	/// let context = AudioContext::new().unwrap();
 	/// let (sender, receiver) = async_channel::bounded(1);
@@ -504,7 +504,7 @@ pub trait AudioWorkletGlobalScopeExt {
 	///
 	/// - If the `name` is empty.
 	/// - If a processor with this `name` is already registered.
-	/// - If this thread was not spawned by [`web-thread`](crate).
+	/// - If this thread was not spawned by [`web-workers`](crate).
 	///
 	/// # Example
 	///
@@ -516,9 +516,9 @@ pub trait AudioWorkletGlobalScopeExt {
 	/// # use wasm_bindgen::JsCast;
 	/// use web_sys::{AudioContext, AudioWorkletGlobalScope, AudioWorkletNode};
 	/// # use web_sys::{AudioWorkletNodeOptions, AudioWorkletProcessor};
-	/// use web_thread::web::{self, YieldTime};
-	/// use web_thread::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt};
-	/// # use web_thread::web::audio_worklet::ExtendAudioWorkletProcessor;
+	/// use web_workers::web::{self, YieldTime};
+	/// use web_workers::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt};
+	/// # use web_workers::web::audio_worklet::ExtendAudioWorkletProcessor;
 	///
 	/// # struct TestProcessor;
 	/// # impl ExtendAudioWorkletProcessor for TestProcessor {

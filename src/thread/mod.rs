@@ -231,7 +231,7 @@ pub fn park_timeout(dur: Duration) {
 /// Keep in mind that this call will do nothing unless the calling thread
 /// supports blocking, see
 /// [`web::has_block_support()`](crate::web::has_block_support).
-#[deprecated(note = "replaced by `web_thread::park_timeout`")]
+#[deprecated(note = "replaced by `web_workers::park_timeout`")]
 pub fn park_timeout_ms(ms: u32) {
 	park_timeout(Duration::from_millis(ms.into()));
 }
@@ -256,7 +256,7 @@ pub fn sleep(dur: Duration) {
 ///
 /// This call will panic if the calling thread doesn't support blocking, see
 /// [`web::has_block_support()`](crate::web::has_block_support).
-#[deprecated(note = "replaced by `web_thread::sleep`")]
+#[deprecated(note = "replaced by `web_workers::sleep`")]
 pub fn sleep_ms(ms: u32) {
 	sleep(Duration::from_millis(ms.into()));
 }

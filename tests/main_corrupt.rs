@@ -22,7 +22,7 @@ async fn test_stack_size(context: BaseAudioContext) {
 
 	use futures_util::future;
 	use futures_util::future::Either;
-	use web_thread::web::audio_worklet::BaseAudioContextExt;
+	use web_workers::web::audio_worklet::BaseAudioContextExt;
 
 	use self::util::{Flag, SIGNAL_DURATION};
 

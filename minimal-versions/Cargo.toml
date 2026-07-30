@@ -5,8 +5,8 @@ publish = false
 version = "0.0.0"
 
 [features]
-audio-worklet = ["web-thread/audio-worklet"]
-message = ["web-thread/message"]
+audio-worklet = ["web-workers/audio-worklet"]
+message = ["web-workers/message"]
 
 [dependencies]
-web-thread = { path = ".." }
+web-workers = { path = ".." }

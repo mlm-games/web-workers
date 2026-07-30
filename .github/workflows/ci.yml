@@ -329,6 +329,7 @@ jobs:
             features: --all-features
     steps:
       - uses: actions/checkout@v7
+      - run: rustup toolchain install ${{ matrix.toolchain }} --no-self-update
       - run: rustup target add ${{ matrix.target }} --toolchain ${{ matrix.toolchain }}
       - if: matrix.args != ''
         run: rustup component add rust-src --toolchain nightly

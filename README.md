@@ -110,6 +110,20 @@ let node = ctx.audio_worklet_node::<MyProcessor>("my-processor", my_data, None)?
 
 Documented in crate docs: incomplete support for blocking in shared workers, spawn-then-block quirks, worklet shutdown leaks unless `AudioWorkletHandle::release` is used carefully, headless audio device issues, transferring `WebAssembly.Module` into some worklet ports, older Firefox module service workers, etc. Check [docs.rs](https://docs.rs/web-workers) and the module-level notes in `src/lib.rs` for linked bug trackers.
 
+## Worker bootstrap contract
+
+1. `initSync` on a worker re-runs `#[wasm_bindgen(start)]` hooks. Start hooks **must** no-op on worker threads (e.g. check `web_sys::window().is_some()` or `web_workers::web::is_main_thread()` after the first call on the page thread), or the worker never reaches its `__web_workers_worker_entry` body.
+2. Never `spawn(..).join()` / `Atomics.wait` on the page thread in the same turn as spawning workers; Chrome will not start the Worker (see bug links above). Prefer an async ready barrier (e.g. await pool entrance before parallel work).
+3. After renaming `#[wasm_bindgen]` exports, rebuild `src/thread/atomics/script/*.min.js` from the `.ts` sources in the same commit. A rename-only Rust change with stale min.js ships a hard worker boot failure. The CI check below catches this.
+
+```bash
+# fail if min.js entry name != Rust export name
+rg -n '__web_workers_worker_entry' src/thread/atomics/script/worker.min.js
+rg -n 'fn __web_workers_worker_entry' src/thread/atomics/spawn/mod.rs
+```
+
+Worker load/runtime failures are logged as `[web-workers] worker failed to start:` and the worker is terminated instead of leaking; post-message failures propagate as `io::Error` from `Builder::spawn`.
+
 ## Development
 
 ```bash

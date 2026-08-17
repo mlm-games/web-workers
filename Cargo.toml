@@ -78,6 +78,8 @@ atomic-waker = "1"
 web-sys = { version = "0.3", features = [
 	"Blob",
 	"BlobPropertyBag",
+	"console",
+	"ErrorEvent",
 	"Url",
 	"Worker",
 	"WorkerOptions",

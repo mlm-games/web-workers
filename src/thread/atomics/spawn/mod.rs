@@ -73,7 +73,6 @@ impl Drop for DecScopeOnDrop {
 /// # Safety
 ///
 /// `task` has to outlive the thread.
-#[allow(clippy::unnecessary_wraps)]
 pub(super) unsafe fn spawn<F1, F2, T>(
 	task: F1,
 	name: Option<String>,
@@ -123,7 +122,7 @@ where
 		spawn_receiver,
 		task,
 		scope,
-	);
+	)?;
 
 	guard.disarm();
 	Ok(handle)
@@ -137,7 +136,7 @@ fn spawn_without_message<T>(
 	#[cfg(feature = "message")] spawn_receiver: channel::Receiver<SpawnData>,
 	task: Task<'_>,
 	scope: Option<Arc<ScopeData>>,
-) -> JoinHandle<T> {
+) -> io::Result<JoinHandle<T>> {
 	if super::is_main_thread() {
 		main::init_main_thread();
 
@@ -149,7 +148,8 @@ fn spawn_without_message<T>(
 			spawn_receiver,
 			Box::new(task),
 			scope,
-		);
+		)
+		.map_err(|e| io::Error::other(format!("failed to spawn worker: {e:?}")))?;
 	} else {
 		// SAFETY: `task` has to be `'static` or `scope` has to be `Some`, which
 		// prevents this thread from outliving its lifetime.
@@ -167,14 +167,15 @@ fn spawn_without_message<T>(
 		.send();
 	}
 
-	JoinHandle {
+	Ok(JoinHandle {
 		receiver: Some(result_receiver),
 		thread,
-	}
+	})
 }
 
 /// Common functionality between thread spawning initialization, regardless if a
 /// message is passed or not.
+#[cfg(feature = "message")]
 fn thread_init(name: Option<String>) -> Thread {
 	Thread::new_with_name(name)
 }
@@ -236,7 +237,7 @@ pub(super) fn spawn_internal(
 	#[cfg(feature = "message")] spawn_receiver: channel::Receiver<SpawnData>,
 	task: Task<'_>,
 	scope: Option<Arc<ScopeData>>,
-) {
+) -> Result<(), JsValue> {
 	let result = spawn_common(
 		id,
 		name,
@@ -256,10 +257,7 @@ pub(super) fn spawn_internal(
 		},
 	);
 
-	if let Err(error) = result {
-		// `spawn_common` already decremented the scope counter.
-		drop(error);
-	}
+	result
 }
 
 /// [`spawn_internal`] regardless if a message is passed or not.
@@ -281,7 +279,16 @@ fn spawn_common(
 			#[cfg(feature = "audio-worklet")]
 			let template = include_str!("../script/worker_with_audio_worklet.min.js");
 
-			ScriptUrl::new(&template.replacen("@shim.js", &META.with(Meta::url), 1))
+			let shim = META.with(Meta::url);
+			// A raw `replacen("@shim.js", ...)` breaks the blob module whenever the
+			// URL contains characters that need escaping.
+			let shim_js = js_sys::JSON::stringify(&JsValue::from_str(&shim))
+				.ok()
+				.and_then(|value| value.as_string())
+				.unwrap_or_else(|| format!("\"{shim}\""));
+
+			let script = template.replacen("\"@shim.js\"", &shim_js, 1);
+			ScriptUrl::new(&script)
 		};
 	}
 
@@ -295,6 +302,27 @@ fn spawn_common(
 	let worker = URL
 		.with(|url| Worker::new_with_options(url.as_raw(), &options))
 		.expect("`new Worker()` is not expected to fail with a local script");
+
+	{
+		use wasm_bindgen::JsCast;
+		use wasm_bindgen::closure::Closure;
+		use web_sys::ErrorEvent;
+
+		//  Without this, a worker whose module import fails (e.g. a wrong `@shim.js`
+		// export) dies silently and any `Atomics.wait` on the main thread
+		// blocks forever.
+		let worker_for_error = worker.clone();
+		let on_error: Closure<dyn Fn(ErrorEvent)> =
+			Closure::wrap(Box::new(move |event: ErrorEvent| {
+				web_sys::console::error_2(
+					&"[web-workers] worker failed to start:".into(),
+					&event.into(),
+				);
+				worker_for_error.terminate();
+			}));
+		worker.set_onerror(Some(on_error.as_ref().unchecked_ref()));
+		on_error.forget();
+	}
 
 	#[cfg(feature = "message")]
 	let message_handler = message::setup_message_handler(&worker, spawn_receiver);

@@ -118,6 +118,20 @@ pub fn has_spawn_support() -> bool {
 	thread::has_spawn_support()
 }
 
+/// Returns [`true`] if the current thread is the main thread.
+///
+/// The main thread is the first thread that found itself in
+/// [`web-workers`](crate), which normally is the thread containing the
+/// [`Window`]. This is useful to distinguish the page thread from worker
+/// threads, e.g. to skip UI initialization or `#[wasm_bindgen(start)]` logic
+/// that re-runs when workers call `initSync`.
+///
+/// [`Window`]: https://developer.mozilla.org/en-US/docs/Web/API/Window
+#[must_use]
+pub fn is_main_thread() -> bool {
+	thread::is_main_thread_public()
+}
+
 /// Web-specific extension for [`web_workers::JoinHandle`](crate::JoinHandle).
 pub trait JoinHandleExt<T> {
 	/// Async version of [`JoinHandle::join()`].

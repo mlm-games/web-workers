@@ -295,6 +295,18 @@ pub(crate) fn has_spawn_support() -> bool {
 	r#impl::has_spawn_support()
 }
 
+/// Implementation for [`crate::web::is_main_thread()`].
+pub(crate) fn is_main_thread_public() -> bool {
+	#[cfg(target_feature = "atomics")]
+	{
+		r#impl::is_main_thread()
+	}
+	#[cfg(not(target_feature = "atomics"))]
+	{
+		true
+	}
+}
+
 /// Returns if [`SharedArrayBuffer`][js_sys::SharedArrayBuffer] is supported.
 fn has_shared_array_buffer_support() -> bool {
 	thread_local! {

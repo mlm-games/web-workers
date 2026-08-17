@@ -90,7 +90,7 @@ pub(super) fn init_main_thread() {
 						task,
 						scope,
 					}) => {
-						spawn::spawn_internal(
+						if let Err(error) = spawn::spawn_internal(
 							id,
 							name.as_deref(),
 							stack_size,
@@ -98,7 +98,12 @@ pub(super) fn init_main_thread() {
 							spawn_receiver,
 							Box::new(task),
 							scope,
-						);
+						) {
+							web_sys::console::error_2(
+								&"[web-workers] spawn_internal failed:".into(),
+								&error,
+							);
+						}
 					}
 					Command::Terminate { id, value, memory } => {
 						// NOTE: If the main thread's event loop shuts down before this

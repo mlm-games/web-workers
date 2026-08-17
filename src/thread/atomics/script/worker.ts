@@ -1,4 +1,4 @@
-import { initSync, __web_thread_worker_entry, Pointer, type Task, type Message } from '@shim.js'
+import { initSync, __web_workers_worker_entry, Pointer, type Task, type Message } from '@shim.js'
 
 onmessage = async event => {
 	onmessage = null
@@ -11,7 +11,7 @@ onmessage = async event => {
 	]
 
 	initSync({ module, memory, thread_stack_size: stackSize })
-	const terminateIndex = await __web_thread_worker_entry(task, message)
+	const terminateIndex = await __web_workers_worker_entry(task, message)
 	const memoryArray = new Int32Array(memory.buffer)
 	Atomics.store(memoryArray, terminateIndex, 1)
 	Atomics.notify(memoryArray, terminateIndex)

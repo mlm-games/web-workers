@@ -1,15 +1,15 @@
-import { initSync, __web_thread_worklet_entry, Pointer, type Task } from '@shim.js'
+import { initSync, __web_workers_worklet_entry, Pointer, type Task } from '@shim.js'
 import {
 	__WebThreadProcessorConstructor,
 	__WebThreadProcessor,
 	AudioParamDescriptor,
-} from 'web_thread_worklet'
+} from 'web_workers_worklet'
 
 interface AudioWorkletProcessorExt extends AudioWorkletProcessor {
-	__web_thread_this: __WebThreadProcessor
+	__web_workers_this: __WebThreadProcessor
 }
 
-globalThis.__web_thread_register_processor = (
+globalThis.__web_workers_register_processor = (
 	name: string,
 	processor: __WebThreadProcessorConstructor
 ) => {
@@ -19,7 +19,7 @@ globalThis.__web_thread_register_processor = (
 			constructor(options: AudioWorkletNodeOptions) {
 				super()
 				const this_ = this as AudioWorkletProcessor as AudioWorkletProcessorExt
-				this_.__web_thread_this = processor.instantiate(this, options)
+				this_.__web_workers_this = processor.instantiate(this, options)
 			}
 
 			process(
@@ -28,7 +28,7 @@ globalThis.__web_thread_register_processor = (
 				outputs: Float32Array[][],
 				parameters: Record<string, Float32Array>
 			): boolean {
-				return this.__web_thread_this.process(inputs, outputs, parameters)
+				return this.__web_workers_this.process(inputs, outputs, parameters)
 			}
 
 			static get parameterDescriptors(): AudioParamDescriptor[] {
@@ -39,7 +39,7 @@ globalThis.__web_thread_register_processor = (
 }
 
 registerProcessor(
-	'__web_thread_worklet',
+	'__web_workers_worklet',
 	class extends AudioWorkletProcessor implements AudioWorkletProcessorImpl {
 		constructor(options: AudioWorkletNodeOptions) {
 			super()
@@ -57,7 +57,7 @@ registerProcessor(
 			Atomics.store(memoryArray, workletLock, 0)
 			Atomics.notify(memoryArray, workletLock)
 
-			__web_thread_worklet_entry(task)
+			__web_workers_worklet_entry(task)
 		}
 
 		process(): boolean {

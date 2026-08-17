@@ -1,5 +1,5 @@
 declare global {
-	function __web_thread_register_processor(
+	function __web_workers_register_processor(
 		name: string,
 		processor: __WebThreadProcessorConstructor
 	): void

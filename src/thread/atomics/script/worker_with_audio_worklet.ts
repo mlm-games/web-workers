@@ -1,4 +1,4 @@
-import { initSync, __web_thread_worker_entry, Pointer, type Task, type Message } from '@shim.js'
+import { initSync, __web_workers_worker_entry, Pointer, type Task, type Message } from '@shim.js'
 
 onmessage = async event => {
 	onmessage = null
@@ -27,7 +27,7 @@ onmessage = async event => {
 
 	if (Atomics.sub(memoryArray, workerLock, 1) === 1) Atomics.notify(memoryArray, workerLock)
 
-	const terminateIndex = await __web_thread_worker_entry(task, message)
+	const terminateIndex = await __web_workers_worker_entry(task, message)
 	Atomics.store(memoryArray, terminateIndex, 1)
 	Atomics.notify(memoryArray, terminateIndex)
 	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0)

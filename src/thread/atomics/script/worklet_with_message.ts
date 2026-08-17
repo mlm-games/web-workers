@@ -1,27 +1,27 @@
 import {
 	initSync,
-	__web_thread_worklet_register,
-	__web_thread_worklet_entry,
+	__web_workers_worklet_register,
+	__web_workers_worklet_entry,
 	Pointer,
 	type Data,
 	type Message,
 	type Task,
 } from '@shim.js'
-import { __WebThreadProcessor, AudioParamDescriptor } from 'web_thread_worklet'
+import { __WebThreadProcessor, AudioParamDescriptor } from 'web_workers_worklet'
 
 interface AudioWorkletProcessorExt extends AudioWorkletProcessor {
-	__web_thread_this: __WebThreadProcessor
+	__web_workers_this: __WebThreadProcessor
 	continueProcessing: boolean
 }
 
-globalThis.__web_thread_register_processor = (name, processor) => {
+globalThis.__web_workers_register_processor = (name, processor) => {
 	globalThis.registerProcessor(
 		name,
 		class extends AudioWorkletProcessor implements AudioWorkletProcessorImpl {
 			constructor(options: AudioWorkletNodeOptions) {
 				super()
 				const this_ = this as AudioWorkletProcessor as AudioWorkletProcessorExt
-				this_.__web_thread_this = processor.instantiate(this, options)
+				this_.__web_workers_this = processor.instantiate(this, options)
 			}
 
 			process(
@@ -31,7 +31,7 @@ globalThis.__web_thread_register_processor = (name, processor) => {
 				parameters: Record<string, Float32Array>
 			): boolean {
 				const this_ = this as AudioWorkletProcessorExt
-				return this_.__web_thread_this.process(inputs, outputs, parameters)
+				return this_.__web_workers_this.process(inputs, outputs, parameters)
 			}
 
 			static get parameterDescriptors(): AudioParamDescriptor[] {
@@ -42,7 +42,7 @@ globalThis.__web_thread_register_processor = (name, processor) => {
 }
 
 registerProcessor(
-	'__web_thread_worklet',
+	'__web_workers_worklet',
 	class extends AudioWorkletProcessor implements AudioWorkletProcessorImpl {
 		constructor(options: AudioWorkletNodeOptions) {
 			super()
@@ -61,7 +61,7 @@ registerProcessor(
 			Atomics.store(memoryArray, workletLock, 0)
 			Atomics.notify(memoryArray, workletLock)
 
-			__web_thread_worklet_register(data)
+			__web_workers_worklet_register(data)
 
 			this_.continueProcessing = true
 			this_.port.onmessage = event => {
@@ -74,7 +74,7 @@ registerProcessor(
 
 				if (task === undefined) return
 
-				__web_thread_worklet_entry(task, message, event.ports[0])
+				__web_workers_worklet_entry(task, message, event.ports[0])
 			}
 		}
 

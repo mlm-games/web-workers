@@ -12,15 +12,15 @@ export interface initSyncOptions {
 	thread_stack_size?: number | undefined
 }
 
-export function __web_thread_worklet_entry(
+export function __web_workers_worklet_entry(
 	task: Pointer<typeof Task>,
 	message?: Pointer<typeof Message>,
 	port?: MessagePort
 ): void
 
-export function __web_thread_worklet_register(data: Pointer<typeof Data>): void
+export function __web_workers_worklet_register(data: Pointer<typeof Data>): void
 
-export function __web_thread_worker_entry(
+export function __web_workers_worker_entry(
 	task: Pointer<typeof Task>,
 	message: Pointer<typeof Message>
 ): Promise<number>

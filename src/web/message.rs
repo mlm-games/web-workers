@@ -628,8 +628,9 @@ impl<T: Send> MessageSend for SendWrapper<T> {
 	}
 }
 
-// Direct `MessageSend` impls for primitives and common transferables to make `#[derive(MessageSend)]` ergonomic.
-// Primitives go via `Send` channel, transferables via `TransferableWrapper` (zero-copy).
+// Direct `MessageSend` impls for primitives and common transferables to make
+// `#[derive(MessageSend)]` ergonomic. Primitives go via `Send` channel,
+// transferables via `TransferableWrapper` (zero-copy).
 macro_rules! impl_message_send_via_send {
 	($($t:ty),*) => {
 		$(
@@ -648,7 +649,9 @@ macro_rules! impl_message_send_via_send {
 	}
 }
 
-impl_message_send_via_send!(String, bool, char, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, f32, f64);
+impl_message_send_via_send!(
+	String, bool, char, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, f32, f64
+);
 
 macro_rules! impl_message_send_via_transferable {
 	($($t:ty),*) => {
@@ -687,9 +690,19 @@ impl_message_send_via_transferable!(web_sys::ImageBitmap);
 impl_message_send_via_transferable!(web_sys::OffscreenCanvas);
 #[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
 impl_message_send_via_transferable!(web_sys::RtcDataChannel);
-#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message", web_sys_unstable_apis))]
+#[cfg(all(
+	target_family = "wasm",
+	target_os = "unknown",
+	feature = "message",
+	web_sys_unstable_apis
+))]
 impl_message_send_via_transferable!(web_sys::VideoFrame);
-#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message", web_sys_unstable_apis))]
+#[cfg(all(
+	target_family = "wasm",
+	target_os = "unknown",
+	feature = "message",
+	web_sys_unstable_apis
+))]
 impl_message_send_via_transferable!(web_sys::AudioData);
 
 /// Helper type to minimize FFI calls when building [`Array`]s.

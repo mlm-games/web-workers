@@ -88,3 +88,6 @@ pub use self::thread::{
 	target_feature = "exception-handling"
 ))]
 compile_error!("this library does not work correctly with the exception handling proposal");
+
+#[cfg(feature = "derive")]
+pub use web_workers_derive::MessageSend;

@@ -628,6 +628,70 @@ impl<T: Send> MessageSend for SendWrapper<T> {
 	}
 }
 
+// Direct `MessageSend` impls for primitives and common transferables to make `#[derive(MessageSend)]` ergonomic.
+// Primitives go via `Send` channel, transferables via `TransferableWrapper` (zero-copy).
+macro_rules! impl_message_send_via_send {
+	($($t:ty),*) => {
+		$(
+			impl MessageSend for $t {
+				type Send = $t;
+
+				fn send<E: Extend<JsValue>>(self, _: &mut E) -> RawMessage<Self::Send> {
+					SendWrapper(self).send(&mut Vec::<JsValue>::new())
+				}
+
+				fn receive(serialized: Option<JsValue>, sent: Option<Self::Send>) -> Self {
+					SendWrapper::<$t>::receive(serialized, sent).0
+				}
+			}
+		)*
+	}
+}
+
+impl_message_send_via_send!(String, bool, char, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, f32, f64);
+
+macro_rules! impl_message_send_via_transferable {
+	($($t:ty),*) => {
+		$(
+			impl MessageSend for $t {
+				type Send = ();
+
+				fn send<E: Extend<JsValue>>(self, transfer: &mut E) -> RawMessage<Self::Send> {
+					TransferableWrapper(self).send(transfer)
+				}
+
+				fn receive(serialized: Option<JsValue>, sent: Option<Self::Send>) -> Self {
+					TransferableWrapper::<$t>::receive(serialized, sent).0
+				}
+			}
+		)*
+	}
+}
+
+// js_sys transferables (ArrayBuffer is Transferable on wasm)
+#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+impl_message_send_via_transferable!(js_sys::ArrayBuffer);
+
+// web_sys transferables (behind message feature)
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::MessagePort);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::ReadableStream);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::WritableStream);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::TransformStream);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::ImageBitmap);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::OffscreenCanvas);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message"))]
+impl_message_send_via_transferable!(web_sys::RtcDataChannel);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message", web_sys_unstable_apis))]
+impl_message_send_via_transferable!(web_sys::VideoFrame);
+#[cfg(all(target_family = "wasm", target_os = "unknown", feature = "message", web_sys_unstable_apis))]
+impl_message_send_via_transferable!(web_sys::AudioData);
+
 /// Helper type to minimize FFI calls when building [`Array`]s.
 pub(crate) struct ArrayBuilder {
 	/// The [`Array`].

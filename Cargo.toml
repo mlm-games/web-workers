@@ -47,11 +47,11 @@ message = [
 	"web-sys/VideoFrame",
 	"web-sys/WritableStream",
 ]
-derive = ["dep:web-workers-derive"]
+derive = []
 
 [dependencies]
 continue = "0.1.1"
-web-workers-derive = { version = "0.1", optional = true }
+web-workers-derive = { version = "0.1" }
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
 js-sys = "0.3.103"

@@ -51,6 +51,7 @@ derive = []
 
 [dependencies]
 continue = "0.1.1"
+pollster = "0.4"
 web-workers-derive = { version = "0.1" }
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]

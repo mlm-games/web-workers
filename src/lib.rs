@@ -91,3 +91,48 @@ compile_error!("this library does not work correctly with the exception handling
 
 #[cfg(feature = "derive")]
 pub use web_workers_derive::MessageSend;
+
+/// Unified spawn for native, Android, and WASM.
+pub fn spawn_unified<F>(f: F)
+where
+	F: FnOnce() + Send + 'static,
+{
+	#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
+	{
+		spawn(f);
+	}
+	#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+	{
+		if crate::web::has_spawn_support() {
+			crate::spawn(f);
+		} else {
+			wasm_bindgen_futures::spawn_local(async move { f() });
+		}
+	}
+}
+
+/// Async version of [`spawn_unified`].
+pub fn spawn_async_unified<F1, F2, T>(f: F1)
+where
+	F1: FnOnce() -> F2 + Send + 'static,
+	F2: Future<Output = T> + 'static,
+	T: Send + 'static,
+{
+	#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
+	{
+		spawn(move || {
+			let _ = pollster::block_on(f());
+		});
+	}
+	#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+	{
+		if crate::web::has_spawn_support() {
+			use crate::web::BuilderExt;
+			let _ = crate::Builder::new().spawn_async(f);
+		} else {
+			wasm_bindgen_futures::spawn_local(async move {
+				let _ = f().await;
+			});
+		}
+	}
+}

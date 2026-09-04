@@ -56,7 +56,6 @@ web-workers-derive = { version = "0.1" }
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
 js-sys = "0.3.103"
-minicov = "0.3"
 pin-project = "1.1.13"
 wasm-bindgen = { version = "0.2.126", default-features = false }
 wasm-bindgen-futures = "0.4.76"
@@ -75,6 +74,9 @@ web-sys = { version = "0.3.103", features = [
 	"WorkerNavigator",
 ] }
 web-time = "1.1"
+
+[target.'cfg(wasm_bindgen_unstable_test_coverage)'.dependencies]
+minicov = "0.3"
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown", target_feature = "atomics"))'.dependencies]
 atomic-waker = "1"
@@ -100,8 +102,10 @@ pollster = { version = "0.4", features = ["macro"] }
 ui_test = "0.30"
 web-workers-derive = "0.1"
 
-[target.'cfg(target_family = "wasm")'.dev-dependencies]
+[target.'cfg(wasm_bindgen_unstable_test_coverage)'.dev-dependencies]
 minicov = "0.3"
+
+[target.'cfg(target_family = "wasm")'.dev-dependencies]
 async-channel = { version = "2", default-features = false }
 console_error_panic_hook = "0.1"
 itertools = { version = "0.15", default-features = false }

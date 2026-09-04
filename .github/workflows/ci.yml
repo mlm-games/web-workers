@@ -22,8 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - run: rustup component add rustfmt --toolchain nightly
-      - run: cargo +nightly fmt --all -- --check
+      - run: cargo fmt --all -- --check
 
   rustdoc:
     name: Docs (${{ matrix.target }}${{ matrix.description }})

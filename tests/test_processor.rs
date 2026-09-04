@@ -11,6 +11,7 @@ use std::cell::{OnceCell, RefCell};
 use std::marker::PhantomData;
 
 use js_sys::{Array, Iterator, Object};
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::wasm_bindgen;

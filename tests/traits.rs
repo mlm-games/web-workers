@@ -3,7 +3,7 @@ use std::hash::Hash;
 use std::marker::PhantomPinned;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 #[cfg(target_family = "wasm")]

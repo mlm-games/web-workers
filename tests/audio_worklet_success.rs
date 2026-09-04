@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::future::Future;
 
 use js_sys::{Array, Iterator, JsString, Object, Reflect};
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;

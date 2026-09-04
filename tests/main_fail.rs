@@ -1,5 +1,6 @@
 #![cfg(target_family = "wasm")]
 
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 
 mod audio_worklet_fail;

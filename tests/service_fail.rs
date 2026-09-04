@@ -2,7 +2,7 @@
 // See <https://bugzilla.mozilla.org/show_bug.cgi?id=1360870>.
 #![cfg(all(target_family = "wasm", not(unsupported_service)))]
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 
 mod basic_fail;

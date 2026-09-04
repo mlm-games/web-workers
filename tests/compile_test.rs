@@ -1,6 +1,6 @@
 //! Test for compile-fail tests.
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 
 #[cfg(not(target_family = "wasm"))]

@@ -1,7 +1,7 @@
 #[cfg(not(target_family = "wasm"))]
 use std::time;
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use time::{Duration, Instant};
 use web_workers::{Builder, Scope};

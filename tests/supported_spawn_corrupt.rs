@@ -2,7 +2,7 @@ use std::hint;
 
 use futures_util::future;
 use futures_util::future::Either;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use web_workers::Builder;
 

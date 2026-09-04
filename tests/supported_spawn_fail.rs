@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 
 use futures_util::future::{self, Either};
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use wasm_bindgen_test::wasm_bindgen_test;
 use web_workers::web::{JoinHandleExt, ScopedJoinHandleExt};

@@ -10,7 +10,7 @@ use std::task::{Context, Poll, ready};
 
 use atomic_waker::AtomicWaker;
 use js_sys::Promise;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::{JsCast, JsValue};

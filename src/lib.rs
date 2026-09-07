@@ -128,7 +128,9 @@ where
 	{
 		if crate::web::has_spawn_support() {
 			use crate::web::BuilderExt;
-			let _ = crate::Builder::new().spawn_async(f);
+			if let Err(e) = crate::Builder::new().spawn_async(f) {
+				eprintln!("[web-workers] spawn_async failed: {e}");
+			}
 		} else {
 			wasm_bindgen_futures::spawn_local(async move {
 				let _ = f().await;

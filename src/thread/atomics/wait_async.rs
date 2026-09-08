@@ -148,7 +148,11 @@ impl WaitAsync {
 				WORKERS.with(move |workers| {
 					let mut workers = workers.borrow_mut();
 					workers.push(worker);
-					workers.truncate(POLYFILL_WORKER_CACHE);
+					// Explicitly terminate workers evicted from the cache instead of
+					// relying on JS garbage collection to clean them up.
+					while workers.len() > POLYFILL_WORKER_CACHE {
+						workers.remove(0).terminate();
+					}
 				});
 
 				shared.finished.store(true, Ordering::Release);

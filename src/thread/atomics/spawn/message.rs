@@ -51,13 +51,12 @@ where
 	let raw_message = message.send(&mut transfer_builder);
 	let transfer = transfer_builder.finish();
 
-	// Incement scope counter before attempting spawn.
+	// Increment scope counter before attempting spawn.
 	if let Some(ref scope_data) = scope {
 		scope_data.threads.fetch_add(1, Ordering::Relaxed);
 	}
 
-	let guard = DecScopeOnDrop(scope.clone());
-
+	let mut guard = DecScopeOnDrop(scope.clone());
 	let task: Task<'_> = Box::new({
 		let thread = thread.clone();
 		let scope = scope.clone();
@@ -114,7 +113,7 @@ where
 				})
 				.expect("`Receiver` in main thread dropped");
 
-			Global::with(|global| match global {
+			let result = Global::with(|global| match global {
 				Global::Dedicated(global) => send_message(global, &serialize, transfer),
 				#[cfg(feature = "audio-worklet")]
 				Global::Worklet => super::super::audio_worklet::register::message::MESSAGE_PORT.with(|port| {
@@ -124,7 +123,16 @@ where
 					send_message(port, &serialize, transfer)
 				}),
 				_ => unreachable!("spawning from thread not registered by `web-workers`"),
-			})?;
+			});
+
+			if result.is_err() {
+				// `send_message()` posted a sentinel message, so the main
+				// thread decrements the scope counter. Disarm the guard to
+				// avoid counting this failure twice.
+				guard.disarm();
+			}
+
+			result?;
 		}
 
 		JoinHandle {
@@ -171,7 +179,8 @@ fn send_message(
 
 /// Spawning thread regardless of being nested.
 ///
-/// On error the scope counter is decremented (handled by `spawn_common`).
+/// On error the scope counter is decremented by the caller's
+/// `DecScopeOnDrop` guard.
 fn spawn_internal(
 	id: ThreadId,
 	name: Option<&str>,
@@ -320,7 +329,10 @@ pub(in super::super) fn setup_message_handler(
 		let serialize = values.next().expect("no serialized data found");
 		let transfer = values.next().map(Array::unchecked_from_js);
 
-		// spawn_common handles scope decrement on error internally.
+		// `spawn_common` leaves the scope counter untouched on error, so
+		// decrement it here explicitly (`spawn()` covers its own failures
+		// through a `DecScopeOnDrop` guard instead).
+		let scope = data.scope.clone();
 		if let Err(error) = spawn_internal(
 			data.id,
 			data.name.as_deref(),
@@ -332,6 +344,12 @@ pub(in super::super) fn setup_message_handler(
 			data.scope,
 		) {
 			drop(error);
+			if let Some(ref scope) = scope {
+				if scope.threads.fetch_sub(1, Ordering::Release) == 1 {
+					scope.thread.unpark();
+					scope.waker.wake();
+				}
+			}
 		}
 	});
 	this.set_onmessage(Some(message_handler.as_ref().unchecked_ref()));

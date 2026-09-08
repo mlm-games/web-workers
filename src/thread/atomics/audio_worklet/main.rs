@@ -40,7 +40,7 @@ pub(super) struct State {
 pub(in super::super) fn init_main_thread() {
 	debug_assert!(
 		super::super::is_main_thread(),
-		"initizalizing main thread without being on the main thread"
+		"initializing main thread without being on the main thread"
 	);
 
 	DESTROY_SENDER.get_or_init(|| {

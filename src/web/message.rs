@@ -185,6 +185,9 @@ impl<const SIZE: usize, T: MessageSend> MessageSend for [T; SIZE] {
 						builder
 					})
 					.push(serialize);
+			} else if let Some(builder) = serialize_builder.as_mut() {
+				// Pad the position so that later elements keep their indexes.
+				builder.push(JsValue::NULL);
 			} else {
 				empty_serialize_count += 1;
 			}
@@ -252,6 +255,9 @@ macro_rules! message_send_for_tuple {
 								builder
 							})
 							.push(serialize);
+					} else if let Some(builder) = serialize_builder.as_mut() {
+						// Pad the position so that later elements keep their indexes.
+						builder.push(JsValue::NULL);
 					} else {
 						empty_serialize_count += 1;
 					}

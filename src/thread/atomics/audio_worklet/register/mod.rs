@@ -115,7 +115,15 @@ fn register_thread_internal(
 			#[cfg(feature = "message")]
 			let template = include_str!("../../script/worklet_with_message.min.js");
 
-			ScriptUrl::new(&template.replacen("@shim.js", &META.with(Meta::url), 1))
+			let shim = META.with(Meta::url);
+			// A raw `replacen("@shim.js", ...)` breaks the blob module whenever the
+			// URL contains characters that need escaping.
+			let shim_js = js_sys::JSON::stringify(&JsValue::from_str(&shim))
+				.ok()
+				.and_then(|value| value.as_string())
+				.unwrap_or_else(|| format!("\"{shim}\""));
+
+			ScriptUrl::new(&template.replacen("\"@shim.js\"", &shim_js, 1))
 		};
 		/// Object URL to the TextDecoder polyfill script.
 		static POLYFILL_URL: ScriptUrl = ScriptUrl::new(POLYFILL_SCRIPT);
@@ -133,6 +141,13 @@ fn register_thread_internal(
 			"`BaseAudioContext` already registered a thread",
 		))));
 	}
+
+	// Mark the context synchronously so that a concurrent `register_thread()`
+	// call on the same context fails instead of registering a second thread.
+	// Every error path below has to clear it again through `clear_registered()`.
+	context
+		.unchecked_ref::<BaseAudioContextExt>()
+		.set_registered(true);
 
 	let worklet = context
 		.audio_worklet()
@@ -153,9 +168,20 @@ fn register_thread_internal(
 				message,
 				worklet_url: URL.with(|url| url.as_raw().to_string()),
 			},
-			Err(error) => State::Error(super::super::error_from_exception(error)),
+			Err(error) => {
+				clear_registered(&context);
+				State::Error(super::super::error_from_exception(error))
+			}
 		},
 	))
+}
+
+/// Clears the marker set in [`register_thread_internal()`], allowing a later
+/// `register_thread()` call to retry after a failure.
+fn clear_registered(context: &BaseAudioContext) {
+	context
+		.unchecked_ref::<BaseAudioContextExt>()
+		.set_registered(false);
 }
 
 /// Implementation for [`crate::web::audio_worklet::RegisterThreadFuture`].
@@ -456,9 +482,6 @@ impl Future for RegisterThreadFuture {
 						// TextDecoder polyfill loaded. Now load the actual worklet module.
 						match worklet.add_module(worklet_url.as_str()) {
 							Ok(promise) => {
-								context
-									.unchecked_ref::<BaseAudioContextExt>()
-									.set_registered(true);
 								let promise = JsFuture::from(promise);
 								let (memory_sender, memory_receiver) = oneshot::channel();
 								#[cfg(feature = "message")]
@@ -504,11 +527,15 @@ impl Future for RegisterThreadFuture {
 								});
 							}
 							Err(error) => {
+								clear_registered(&context);
 								return Poll::Ready(Err(super::super::error_from_exception(error)));
 							}
 						}
 					}
 					Poll::Ready(Err(error)) => {
+						if let State::Polyfill { context, .. } = &state {
+							clear_registered(context);
+						}
 						return Poll::Ready(Err(super::super::error_from_exception(error)));
 					}
 					Poll::Pending => {
@@ -559,6 +586,9 @@ impl Future for RegisterThreadFuture {
 						});
 					}
 					Poll::Ready(Err(error)) => {
+						if let State::Module { context, .. } = &state {
+							clear_registered(context);
+						}
 						return Poll::Ready(Err(super::super::error_from_exception(error)));
 					}
 					Poll::Pending => {
@@ -705,6 +735,7 @@ impl Future for RegisterThreadFuture {
 								wasm32::memory_atomic_notify(WORKLET_LOCK.as_ptr(), u32::MAX)
 							};
 
+							clear_registered(&context);
 							return Poll::Ready(Err(super::super::error_from_exception(error)));
 						}
 					}
@@ -715,6 +746,8 @@ impl Future for RegisterThreadFuture {
 				} => match Pin::new(memory_receiver).poll(cx) {
 					Poll::Ready(Some(memory)) => {
 						let State::Memory {
+							#[cfg(feature = "message")]
+							context,
 							thread,
 							#[cfg(feature = "message")]
 							task,
@@ -800,6 +833,7 @@ impl Future for RegisterThreadFuture {
 									unsafe { memory.release() }.expect(
 										"found `RegisterThreadFuture` not on the main thread",
 									);
+									clear_registered(&context);
 									return Poll::Ready(Err(super::super::error_from_exception(
 										error,
 									)));

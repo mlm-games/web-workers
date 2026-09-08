@@ -43,5 +43,12 @@ extern "C" {
 
 #[cfg(target_arch = "wasm32")]
 pub(crate) fn atomics_wait_supported() -> bool {
-	_web_workers_supportsAtomicsWait()
+	// NOTE: This must be cached per thread, not process-wide: the probe calls
+	// `Atomics.wait()` on the calling thread, which throws on the main thread
+	// (no blocking allowed there) but succeeds in workers.
+	thread_local! {
+		static SUPPORTED: bool = _web_workers_supportsAtomicsWait();
+	}
+
+	SUPPORTED.with(bool::clone)
 }

@@ -118,7 +118,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install llvm-22
       - name: Download Test Coverage
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: test-coverage-*
           path: coverage-input
@@ -211,12 +211,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Download Test Coverage
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: test-coverage
           path: page/coverage
       - name: Download Documentation
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: documentation
           path: page/doc

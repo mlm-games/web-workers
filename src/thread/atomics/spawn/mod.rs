@@ -52,7 +52,7 @@ pub(super) struct SpawnData {
 pub(super) struct DecScopeOnDrop(Option<Arc<ScopeData>>);
 
 impl DecScopeOnDrop {
-	fn disarm(mut self) {
+	fn disarm(&mut self) {
 		self.0 = None;
 	}
 }
@@ -96,7 +96,7 @@ where
 		scope_data.threads.fetch_add(1, Ordering::Relaxed);
 	}
 
-	let guard = DecScopeOnDrop(scope.clone());
+	let mut guard = DecScopeOnDrop(scope.clone());
 
 	let task: Task<'_> = Box::new({
 		let thread = thread.clone();
@@ -228,8 +228,8 @@ fn thread_runner<'scope, T: 'scope + Send, F1: 'scope + FnOnce() -> F2, F2: Futu
 
 /// Spawning thread regardless of being nested.
 ///
-/// On error the scope counter is decremented (handled by `spawn_common`).
-/// The caller is responsible for incrementing the scope counter before calling.
+/// On error the scope counter is decremented by the caller's
+/// `DecScopeOnDrop` guard.
 pub(super) fn spawn_internal(
 	id: ThreadId,
 	name: Option<&str>,
@@ -262,7 +262,8 @@ pub(super) fn spawn_internal(
 
 /// [`spawn_internal`] regardless if a message is passed or not.
 ///
-/// On error the scope counter will be decremented if `scope` is provided.
+/// On error the scope counter is left untouched; the caller decrements it
+/// (either through a `DecScopeOnDrop` guard or explicitly).
 fn spawn_common(
 	id: ThreadId,
 	name: Option<&str>,
@@ -303,7 +304,7 @@ fn spawn_common(
 		.with(|url| Worker::new_with_options(url.as_raw(), &options))
 		.expect("`new Worker()` is not expected to fail with a local script");
 
-	{
+	let on_error = {
 		use wasm_bindgen::JsCast;
 		use wasm_bindgen::closure::Closure;
 		use web_sys::ErrorEvent;
@@ -321,8 +322,8 @@ fn spawn_common(
 				worker_for_error.terminate();
 			}));
 		worker.set_onerror(Some(on_error.as_ref().unchecked_ref()));
-		on_error.forget();
-	}
+		on_error
+	};
 
 	#[cfg(feature = "message")]
 	let message_handler = message::setup_message_handler(&worker, spawn_receiver);
@@ -336,13 +337,13 @@ fn spawn_common(
 		// error transmission has failed to avoid double-free.
 		let task: Task<'_> = *unsafe { Box::from_raw(task.as_ptr()) };
 		drop(task);
+		worker.set_onerror(None);
+		drop(on_error);
 		worker.terminate();
-		if let Some(ref scope) = scope {
-			if scope.threads.fetch_sub(1, Ordering::Release) == 1 {
-				scope.thread.unpark();
-				scope.waker.wake();
-			}
-		}
+		// NOTE: The scope counter is deliberately not decremented here. The
+		// callers that hold a `DecScopeOnDrop` guard (`spawn()`) decrement
+		// through it, while `setup_message_handler()` decrements explicitly,
+		// so decrementing here as well would count the failure twice.
 		return Err(err);
 	};
 
@@ -351,6 +352,7 @@ fn spawn_common(
 			id,
 			State {
 				this: worker,
+				_onerror: on_error,
 				#[cfg(feature = "message")]
 				_message_handler: message_handler,
 			},

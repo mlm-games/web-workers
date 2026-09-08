@@ -6,7 +6,8 @@ use std::pin::Pin;
 use std::sync::OnceLock;
 use std::sync::atomic::AtomicI32;
 
-use web_sys::Worker;
+use wasm_bindgen::closure::Closure;
+use web_sys::{ErrorEvent, Worker};
 #[cfg(feature = "message")]
 use {wasm_bindgen::closure::Closure, web_sys::MessageEvent};
 
@@ -33,6 +34,9 @@ thread_local! {
 pub(super) struct State {
 	/// [`Worker`]
 	pub(super) this: Worker,
+	/// Callback handling worker startup errors. Stored here (instead of
+	/// leaking it) so it is released when the worker is terminated.
+	pub(super) _onerror: Closure<dyn Fn(ErrorEvent)>,
 	/// Callback handling messages.
 	#[cfg(feature = "message")]
 	pub(super) _message_handler: Closure<dyn Fn(MessageEvent)>,
@@ -71,7 +75,10 @@ impl Command {
 ///
 /// This will panic if called outside the main thread.
 pub(super) fn init_main_thread() {
-	super::is_main_thread();
+	debug_assert!(
+		super::is_main_thread(),
+		"initializing main thread without being on the main thread"
+	);
 
 	COMMAND_SENDER.get_or_init(|| {
 		super::has_spawn_support();
@@ -123,6 +130,7 @@ pub(super) fn init_main_thread() {
 									.expect("`Worker` to be terminated not found")
 							});
 							state.this.terminate();
+							state.this.set_onerror(None);
 							#[cfg(feature = "message")]
 							state.this.set_onmessage(None);
 						});

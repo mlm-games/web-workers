@@ -15,7 +15,7 @@ use minicov as _;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{DedicatedWorkerGlobalScope, Window};
+use web_sys::{DedicatedWorkerGlobalScope, Window, WorkerGlobalScope};
 use web_time::Duration;
 
 pub const SIGNAL_DURATION: Duration = Duration::from_secs(1);
@@ -36,6 +36,9 @@ pub fn sleep(duration: Duration) -> Sleep {
 	enum Global {
 		Window(Window),
 		DedicatedWorker(DedicatedWorkerGlobalScope),
+		// `SharedWorkerGlobalScope` has no `setTimeout()` binding in
+		// `web-sys`, so upcast to `WorkerGlobalScope`, which does.
+		SharedWorker(WorkerGlobalScope),
 	}
 
 	thread_local! {
@@ -50,6 +53,9 @@ pub fn sleep(duration: Duration) -> Sleep {
 
 				#[wasm_bindgen(method, getter, js_name = DedicatedWorkerGlobalScope)]
 				fn worker(this: &SleepGlobal) -> JsValue;
+
+				#[wasm_bindgen(method, getter, js_name = SharedWorkerGlobalScope)]
+				fn shared_worker(this: &SleepGlobal) -> JsValue;
 			}
 
 			let global: SleepGlobal = js_sys::global().unchecked_into();
@@ -58,6 +64,8 @@ pub fn sleep(duration: Duration) -> Sleep {
 				Global::Window(global.unchecked_into())
 			} else if !global.worker().is_undefined() {
 				Global::DedicatedWorker(global.unchecked_into())
+			} else if !global.shared_worker().is_undefined() {
+				Global::SharedWorker(global.unchecked_into())
 			} else {
 				unreachable!("only supported in a browser or web worker")
 			}
@@ -73,6 +81,8 @@ pub fn sleep(duration: Duration) -> Sleep {
 					Global::Window(window) => window
 						.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, duration),
 					Global::DedicatedWorker(worker) => worker
+						.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, duration),
+					Global::SharedWorker(worker) => worker
 						.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, duration),
 				})
 				.unwrap();

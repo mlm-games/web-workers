@@ -88,9 +88,9 @@ pub trait BaseAudioContextExt {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use web_sys::AudioContext;
 	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
@@ -103,7 +103,7 @@ pub trait BaseAudioContextExt {
 	/// 	},
 	/// ).await.unwrap();
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	///
@@ -138,9 +138,9 @@ pub trait BaseAudioContextExt {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use js_sys::ArrayBuffer;
 	/// use web_sys::AudioContext;
@@ -163,7 +163,7 @@ pub trait BaseAudioContextExt {
 	/// 	.await
 	/// 	.unwrap();
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	///
@@ -202,9 +202,9 @@ pub trait BaseAudioContextExt {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// # use wasm_bindgen::JsCast;
 	/// use web_sys::{AudioContext, AudioWorkletGlobalScope, AudioWorkletNodeOptions, AudioWorkletProcessor};
@@ -247,7 +247,7 @@ pub trait BaseAudioContextExt {
 	/// let node = context.audio_worklet_node::<TestProcessor>("test", String::from("test"), None).unwrap();
 	/// # let _ = node;
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	///
@@ -385,9 +385,9 @@ impl AudioWorkletHandle {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use web_sys::{AudioContext, console};
 	/// use web_workers::web::audio_worklet::BaseAudioContextExt;
@@ -402,7 +402,7 @@ impl AudioWorkletHandle {
 	///
 	/// console::log_1(&format!("thread id: {:?}", handle.thread().id()).into());
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	#[must_use]
@@ -425,9 +425,9 @@ impl AudioWorkletHandle {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// use wasm_bindgen_futures::JsFuture;
 	/// use web_sys::AudioContext;
@@ -450,7 +450,7 @@ impl AudioWorkletHandle {
 	/// // events or promises that could call into the Wasm module later.
 	/// unsafe { handle.release() }.unwrap();
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	pub unsafe fn release(self) -> Result<(), ReleaseError> {
@@ -509,9 +509,9 @@ pub trait AudioWorkletGlobalScopeExt {
 	/// # Example
 	///
 	/// ```
-	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn)))]
+	/// # #[cfg(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)))]
 	/// # wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn)), wasm_bindgen_test::wasm_bindgen_test)]
+	/// # #[cfg_attr(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext)), wasm_bindgen_test::wasm_bindgen_test)]
 	/// # async fn test() {
 	/// # use wasm_bindgen::JsCast;
 	/// use web_sys::{AudioContext, AudioWorkletGlobalScope, AudioWorkletNode};
@@ -552,7 +552,7 @@ pub trait AudioWorkletGlobalScopeExt {
 	/// let node = AudioWorkletNode::new(&context, "test").unwrap();
 	/// # let _ = node;
 	/// # }
-	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn))))]
+	/// # #[cfg(not(all(target_feature = "atomics", not(unsupported_spawn), not(unsupported_headless_audiocontext))))]
 	/// # let _ = test();
 	/// ```
 	///

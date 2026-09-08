@@ -67,6 +67,9 @@ registerProcessor(
 			this_.port.onmessage = event => {
 				this_.continueProcessing = false
 				this_.port.onmessage = null
+
+				if (event.data === undefined) return
+
 				const [task, message] = event.data as [
 					Pointer<typeof Task> | undefined,
 					Pointer<typeof Message>,

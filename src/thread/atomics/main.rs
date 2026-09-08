@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::OnceLock;
-use std::sync::atomic::AtomicI32;
+use std::sync::atomic::{AtomicI32, Ordering};
 
 use wasm_bindgen::closure::Closure;
 use web_sys::{ErrorEvent, Worker};
@@ -97,6 +97,7 @@ pub(super) fn init_main_thread() {
 						task,
 						scope,
 					}) => {
+						let scope_count = scope.clone();
 						if let Err(error) = spawn::spawn_internal(
 							id,
 							name.as_deref(),
@@ -106,6 +107,13 @@ pub(super) fn init_main_thread() {
 							Box::new(task),
 							scope,
 						) {
+							if let Some(ref scope) = scope_count {
+								if scope.threads.fetch_sub(1, Ordering::Release) == 1 {
+									scope.thread.unpark();
+									scope.waker.wake();
+								}
+							}
+
 							web_sys::console::error_2(
 								&"[web-workers] spawn_internal failed:".into(),
 								&error,

@@ -25,6 +25,8 @@ docs:
 test-native:
     cargo test --all-targets --no-fail-fast
     cargo test --doc --no-fail-fast
+    cargo test --all-targets --all-features --no-fail-fast
+    cargo test --doc --all-features --no-fail-fast
 
 # Run wasm tests in Chrome (single-threaded, all features)
 test-wasm-chrome DRIVER="chromedriver" FLAGS="--cfg=unsupported_spawn_then_block":
@@ -32,11 +34,11 @@ test-wasm-chrome DRIVER="chromedriver" FLAGS="--cfg=unsupported_spawn_then_block
 
 # Run wasm tests in Firefox (single-threaded, all features)
 test-wasm-firefox DRIVER="geckodriver":
-    GECKODRIVER={{DRIVER}} RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" cargo test --all-features --target wasm32-unknown-unknown
+    GECKODRIVER={{DRIVER}} RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" cargo test --all-features --target wasm32-unknown-unknown
 
 # Run wasm doctests in Chrome (single-threaded)
 test-wasm-doctest-chrome DRIVER="chromedriver" FLAGS="--cfg=unsupported_spawn_then_block":
-    CHROMEDRIVER={{DRIVER}} RUSTFLAGS="--cfg=web_sys_unstable_apis {{FLAGS}}" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis {{FLAGS}}" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown
+    CHROMEDRIVER={{DRIVER}} RUSTFLAGS="--cfg=web_sys_unstable_apis {{FLAGS}}" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis {{FLAGS}}" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
 
 # Run wasm tests with atomics in Chrome
 test-wasm-atomics-chrome DRIVER="chromedriver":

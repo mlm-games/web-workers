@@ -99,6 +99,10 @@ extern "C" {
 macro_rules! test_audio {
 	($name:ident$(, should_panic = $should_panic:tt)?) => {
 		::paste::paste! {
+			// `AudioContext` requires an actual audio device, which headless
+			// Firefox doesn't provide.
+			// See <https://bugzilla.mozilla.org/show_bug.cgi?id=1881904>.
+			#[cfg(not(unsupported_headless_audiocontext))]
 			#[::wasm_bindgen_test::wasm_bindgen_test]
 			$(#[should_panic = $should_panic])?
 			async fn $name() {

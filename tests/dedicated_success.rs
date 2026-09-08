@@ -5,10 +5,7 @@ use minicov as _;
 
 #[cfg(target_family = "wasm")]
 mod basic_success;
-#[cfg(all(
-	target_family = "wasm",
-	any(not(unsupported_spawn), not(unsupported_wait_async))
-))]
+#[cfg(target_family = "wasm")]
 mod basic_success_async;
 #[cfg(all(
 	target_family = "wasm",

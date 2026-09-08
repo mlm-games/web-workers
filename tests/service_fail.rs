@@ -1,13 +1,14 @@
-// Older Firefox doesn't support module service workers (fixed in Firefox 147+).
-// See <https://bugzilla.mozilla.org/show_bug.cgi?id=1360870>.
-#![cfg(all(target_family = "wasm", not(unsupported_service)))]
+#![cfg(target_family = "wasm")]
 
 #[cfg(all(target_family = "wasm", wasm_bindgen_unstable_test_coverage))]
 use minicov as _;
 
 mod basic_fail;
-#[cfg(any(not(target_feature = "atomics"), not(unsupported_wait_async)))]
 mod basic_fail_async;
+// Service workers can neither spawn workers (`Worker` is unavailable, so
+// `has_spawn_support()` is always `false`) nor block, so the `unsupported_*`
+// panic paths always apply here, even with the atomics target feature and
+// cross-origin isolation.
 mod unsupported_block;
 mod unsupported_spawn;
 

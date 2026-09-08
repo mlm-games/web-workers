@@ -7,9 +7,11 @@ use minicov as _;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use wasm_bindgen_test::wasm_bindgen_test;
+#[cfg(not(unsupported_headless_audiocontext))]
+use web_sys::AudioContext;
 use web_sys::{
-	AudioContext, AudioWorkletGlobalScope, AudioWorkletNode, AudioWorkletNodeOptions,
-	BaseAudioContext, OfflineAudioContext,
+	AudioWorkletGlobalScope, AudioWorkletNode, AudioWorkletNodeOptions, BaseAudioContext,
+	OfflineAudioContext,
 };
 use web_workers::web::audio_worklet::{AudioWorkletGlobalScopeExt, BaseAudioContextExt};
 use web_workers::web::{self, JoinHandleExt, YieldTime};

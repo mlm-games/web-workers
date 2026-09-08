@@ -34,22 +34,22 @@ cargo test
 ## Single-Threaded
 
 CHROMEDRIVER=chromedriver RUSTFLAGS=--cfg=web_sys_unstable_apis cargo test --all-features --target wasm32-unknown-unknown
-GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" cargo test --all-features --target wasm32-unknown-unknown
+GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" cargo test --all-features --target wasm32-unknown-unknown
 
 ## Single-Threaded Doc Tests
 
 CHROMEDRIVER=chromedriver RUSTFLAGS=--cfg=web_sys_unstable_apis RUSTDOCFLAGS=--cfg=web_sys_unstable_apis cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
-GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
+GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
 
 ## Single-Threaded without Cross-Origin Isolation
 
 WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 CHROMEDRIVER=chromedriver RUSTFLAGS=--cfg=web_sys_unstable_apis cargo test --all-features --target wasm32-unknown-unknown
-WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" cargo test --all-features --target wasm32-unknown-unknown
+WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" cargo test --all-features --target wasm32-unknown-unknown
 
 ## Single-Threaded Doc Tests without Cross-Origin Isolation
 
 WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 CHROMEDRIVER=chromedriver RUSTFLAGS=--cfg=web_sys_unstable_apis RUSTDOCFLAGS=--cfg=web_sys_unstable_apis cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
-WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
+WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext" cargo +nightly test --doc --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile
 
 ## Single-Threaded Compile Tests
 
@@ -58,12 +58,12 @@ UI_TEST_TARGET=wasm32-unknown-unknown UI_TEST_ARGS="--features message" cargo te
 ## Multi-Threaded
 
 CHROMEDRIVER=chromedriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn_then_block -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn_then_block -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
-GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_service --cfg=unsupported_shared_block -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
+GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
 
 ## Multi-Threaded without Cross-Origin Isolation
 
 WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 CHROMEDRIVER=chromedriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
-WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn --cfg=unsupported_service --cfg=unsupported_shared_block -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn --cfg=unsupported_service --cfg=unsupported_shared_block -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
+WASM_BINDGEN_TEST_NO_ORIGIN_ISOLATION=1 GECKODRIVER=geckodriver RUSTFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext -Ctarget-feature=+atomics" RUSTDOCFLAGS="--cfg=web_sys_unstable_apis --cfg=unsupported_spawn --cfg=unsupported_shared_block --cfg=unsupported_headless_audiocontext -Ctarget-feature=+atomics" cargo +nightly test --all-features --target wasm32-unknown-unknown -Zdoctest-xcompile -Zbuild-std=panic_abort,std
 
 ## Multi-Threaded Compile Tests
 

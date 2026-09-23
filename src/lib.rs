@@ -67,6 +67,23 @@ use minicov as _;
 /// that work on native and WebAssembly, adapting locking strategy per platform.
 pub mod sync;
 
+/// Cross-platform async task handles ([`task::spawn`], [`task::JoinHandle`],
+/// [`task::AbortOnDrop`]): tokio-backed on native, `spawn_local` on wasm.
+#[cfg(any(not(target_family = "wasm"), all(target_family = "wasm", target_os = "unknown")))]
+pub mod task;
+
+/// Async [`time::sleep`] and [`time::timeout`] as non-blocking futures.
+pub mod time;
+
+/// Exponential-backoff failure cache ([`failures::FailuresCache`]).
+pub mod failures;
+
+/// Fixed-capacity ring buffer ([`ring::RingBuffer`]).
+pub mod ring;
+
+/// Timestamped cache value ([`ttl::TtlValue`]).
+pub mod ttl;
+
 #[cfg(all(target_family = "wasm", target_os = "unknown"))]
 mod thread;
 #[cfg(any(all(target_family = "wasm", target_os = "unknown"), docsrs))]

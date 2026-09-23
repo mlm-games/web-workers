@@ -51,12 +51,23 @@ derive = []
 
 [dependencies]
 continue = "0.1.1"
+futures-util = { version = "0.3", default-features = false, features = ["std", "channel"] }
 pollster = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+web-time = "1.1"
 web-workers-derive = { version = "0.1" }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+tokio = { version = "1", default-features = false, features = ["rt", "time"] }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+gloo-timers = { version = "0.3", default-features = false, features = ["futures"] }
 
 [target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
 js-sys = "0.3.103"
 pin-project = "1.1.13"
+serde = { version = "1", features = ["derive"] }
 wasm-bindgen = { version = "0.2.126", default-features = false }
 wasm-bindgen-futures = "0.4.76"
 web-sys = { version = "0.3.103", features = [
